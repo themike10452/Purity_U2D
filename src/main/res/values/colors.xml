@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <color name="separator_color">#ffffffff</color>
+    <color name="button_background">#ff6a6a6a</color>
+    
+</resources>
