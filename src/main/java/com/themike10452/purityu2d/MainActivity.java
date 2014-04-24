@@ -127,4 +127,8 @@ public class MainActivity extends Activity {
         }
     }
 
+    public void go(View v) {
+        startService(new Intent(this, AutoCheckService.class));
+    }
+
 }
