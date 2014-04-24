@@ -1,8 +1,5 @@
 package com.themike10452.purityu2d;
 
-import android.os.AsyncTask;
-import android.os.Environment;
-
 import eu.chainfire.libsuperuser.Shell;
 
 /**

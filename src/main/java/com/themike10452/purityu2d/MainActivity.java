@@ -21,7 +21,6 @@ public class MainActivity extends Activity {
     private TextView currentVersion, releaseDate, device;
     private String codename, dateTag;
     private Button check;
-    private boolean killedByMaster;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

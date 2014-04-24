@@ -51,11 +51,7 @@ public class DownloadActivity extends Activity {
         finish();
     }
 
-    public DownloadActivity getInstance() {
-        return THIS;
-    }
-
     public void updateMessage(int resID) {
-        ((TextView)findViewById(R.id.message_downloading)).setText(getString(resID));
+        ((TextView) findViewById(R.id.message_downloading)).setText(getString(resID));
     }
 }
