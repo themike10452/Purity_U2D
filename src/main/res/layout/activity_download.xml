@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="New version available:"
+            android:text="@string/message_update"
             android:textStyle="bold" />
 
         <TextView
@@ -76,12 +76,12 @@
         android:visibility="gone" />
 
     <TextView
-        android:layout_marginTop="20dp"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:visibility="invisible"
-        android:id="@+id/textView"
-        android:layout_gravity="center_horizontal" />
+        android:visibility="invisible" />
 
 </LinearLayout>

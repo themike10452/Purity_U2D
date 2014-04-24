@@ -53,9 +53,18 @@
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/btnCheck"
         style="?android:attr/buttonStyle"
-        android:text="@string/button_check"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_check" />
+
+    <Button
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:onClick="go"
+        android:text="Launch Service" />
+
 </LinearLayout>
