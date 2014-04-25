@@ -84,7 +84,8 @@ public class MainActivity extends Activity {
 
     private void check() {
         final File file = new File(getFilesDir() + File.separator + "host");
-        FileDownloader downloader = new FileDownloader(this, lib.host, file, false, true) {
+        String host_file = ((new File(getFilesDir() + "/enable_developer")).exists())? lib.test_host : lib.host;
+        FileDownloader downloader = new FileDownloader(this, host_file, file, false, true) {
             @Override
             protected void onPostExecute(Boolean successful) {
                 super.onPostExecute(successful);

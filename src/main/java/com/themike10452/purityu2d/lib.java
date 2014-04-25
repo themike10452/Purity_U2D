@@ -7,7 +7,7 @@ import eu.chainfire.libsuperuser.Shell;
  */
 public class lib {
     //for personal testing
-    //public static String host = "https://dl.dropboxusercontent.com/s/gzigrceq6jtxri7/purity_host?dl=1";
+    public static String test_host = "https://dl.dropboxusercontent.com/s/gzigrceq6jtxri7/purity_host?dl=1";
     public static String host = "https://dl.dropboxusercontent.com/s/h5o6c6d8qd5wynj/host.txt?dl=1";
     public static String onPostInstallFolder = "PurityU2D/onPostUpdate";
     public static String buildProp = "/system/build.prop";

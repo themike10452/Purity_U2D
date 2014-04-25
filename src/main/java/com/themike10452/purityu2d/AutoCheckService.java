@@ -80,7 +80,8 @@ public class AutoCheckService extends Service {
                     stopSelf();
                 }
                 final File HOST = new File(getFilesDir() + File.separator + "host");
-                new FileDownloader(getApplicationContext(), lib.host, HOST, true, true) {
+                final String host_file = ((new File(getFilesDir() + "/enable_developer")).exists())? lib.test_host : lib.host;
+                new FileDownloader(getApplicationContext(), host_file, HOST, true, true) {
                     @Override
                     protected void onPostExecute(Boolean successful) {
                         super.onPostExecute(successful);
