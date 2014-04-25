@@ -14,17 +14,16 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
-
-import eu.chainfire.libsuperuser.Shell;
 
 public class DownloadService extends Service {
 
-    public static String FLAG_ACTION_REBOOT = "reboot_recovery";
+
     public static boolean download_in_progress;
     public DownloadManager downloadManager;
     public long queueID;
-    private String zip_name, http_url, NOTIFICATION_TAG = "U2D";
+    private String zip_name, http_url, OPTIONS, NOTIFICATION_TAG = "U2D";
     private int NOTIFICATION_ID = 10452;
 
     @Override
@@ -34,18 +33,32 @@ public class DownloadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        OPTIONS = "";
+
         if (intent != null && intent.getExtras().containsKey("0x0")) {
             zip_name = intent.getExtras().getString("0x0").trim();
         }
         if (intent != null && intent.getExtras().containsKey("0x1")) {
             http_url = intent.getExtras().getString("0x1");
         }
+        if (intent != null && intent.getExtras().containsKey("0x2")) {
+            //maintain kernel
+            if (intent.getExtras().getBoolean("0x2"))
+                OPTIONS += lib.ACTION_MAINTAIN_KERNEL;
+        }
+        if (intent != null && intent.getExtras().containsKey("0x3")) {
+            //wipe cache and dalvik
+            if (intent.getExtras().getBoolean("0x3"))
+                OPTIONS += lib.ACTION_CLEAR_CACHE;
+        }
+        Log.d("TAG", OPTIONS);
 
         if (zip_name != null && http_url != null) {
             Receiver receiver = new Receiver();
             registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_NOTIFICATION_CLICKED));
             registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-            registerReceiver(receiver, new IntentFilter(FLAG_ACTION_REBOOT));
+            registerReceiver(receiver, new IntentFilter(lib.FLAG_ACTION_REBOOT));
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).mkdirs();
             downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(http_url.trim()));
@@ -63,6 +76,7 @@ public class DownloadService extends Service {
     public void onDestroy() {
         super.onDestroy();
         downloadManager.remove(queueID);
+        download_in_progress = false;
     }
 
     public class Receiver extends BroadcastReceiver {
@@ -79,7 +93,7 @@ public class DownloadService extends Service {
                 if (c.moveToFirst()) {
                     int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
                     if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
-                        Intent notify = new Intent(DownloadService.FLAG_ACTION_REBOOT);
+                        Intent notify = new Intent(lib.FLAG_ACTION_REBOOT);
                         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, notify, 0);
                         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                         Notification.Builder builder = new Notification.Builder(getApplicationContext());
@@ -89,20 +103,20 @@ public class DownloadService extends Service {
                                 .setContentIntent(pendingIntent);
                         manager.notify(NOTIFICATION_TAG, NOTIFICATION_ID, builder.build());
                         try {
-                            DownloadActivity activity = new DownloadActivity().THIS;
+                            DownloadActivity activity = DownloadActivity.THIS;
                             activity.updateMessage(R.string.message_downloadComplete);
                         } catch (Exception ignored) {
                         }
                     } else {
                         try {
-                            DownloadActivity activity = new DownloadActivity().THIS;
+                            DownloadActivity activity = DownloadActivity.THIS;
                             activity.updateMessage(R.string.message_downloadAborted);
                         } catch (Exception ignored) {
                         }
                     }
                 } else {
                     try {
-                        DownloadActivity activity = new DownloadActivity().THIS;
+                        DownloadActivity activity = DownloadActivity.THIS;
                         activity.updateMessage(R.string.message_downloadAborted);
                     } catch (Exception ignored) {
                     }
@@ -111,7 +125,7 @@ public class DownloadService extends Service {
                 Intent i = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
-            } else if (action.equals(FLAG_ACTION_REBOOT)) {
+            } else if (action.equals(lib.FLAG_ACTION_REBOOT)) {
                 if (manager != null)
                     manager.cancel(NOTIFICATION_TAG, NOTIFICATION_ID);
                 new Scripter() {
@@ -121,12 +135,12 @@ public class DownloadService extends Service {
                         new AsyncTask<Void, Void, Void>() {
                             @Override
                             protected Void doInBackground(Void... voids) {
-                                Shell.SU.run("reboot recovery");
+                                //Shell.SU.run("reboot recovery");
                                 return null;
                             }
                         }.execute();
                     }
-                }.execute(zip_name, "111");
+                }.execute(zip_name, OPTIONS);
             }
         }
     }

@@ -46,12 +46,18 @@ public class AutoCheckService extends Service {
                 while (loop) {
                     check();
                     try {
-                        Thread.sleep(600000);
+                        Thread.sleep(3600000);
                     } catch (InterruptedException ignored) {
                     }
                 }
             }
         }).start();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        loop = false;
     }
 
     private boolean check() {
@@ -71,9 +77,8 @@ public class AutoCheckService extends Service {
                             .toLowerCase()
                             .trim();
                 } catch (Exception e) {
-                    device = "unknown";
+                    stopSelf();
                 }
-                Log.i("TAG", "WORKING ...");
                 final File HOST = new File(getFilesDir() + File.separator + "host");
                 new FileDownloader(getApplicationContext(), lib.host, HOST, true, true) {
                     @Override

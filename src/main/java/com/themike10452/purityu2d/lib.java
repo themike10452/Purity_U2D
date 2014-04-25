@@ -16,9 +16,11 @@ public class lib {
     public static String devicePropTag = "ro.product.device=";
     public static String modelPropTag = "ro.product.model=";
 
-    public static int ACTION_MAINTAIN_KERNEL = 001;
-    public static int ACTION_MAINTAIN_INITD = 010;
-    public static int ACTION_CLEAR_CACHE = 100;
+    public static String FLAG_ACTION_REBOOT = "reboot_recovery";
+
+    public static String ACTION_CLEAR_CACHE = "_CK_";
+    public static String ACTION_MAINTAIN_KERNEL = "_MK_";
+    public static String ACTION_MAINTAIN_INITD = "_MI_";
 
     public static String shellOut(String command, String delim, int tok) {
         String string;
