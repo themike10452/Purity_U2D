@@ -1,6 +1,7 @@
 package com.themike10452.purityu2d;
 
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 
 import java.io.File;
@@ -14,8 +15,7 @@ public class Scripter extends AsyncTask<String, Void, Void> {
 
         String flags = args[1];
 
-        String serialno = (new File(Environment.getExternalStorageDirectory() + "/TWRP/BACKUPS/")).listFiles()[0].getName();
-
+        String serialno = Build.SERIAL;
         ArrayList<String> list = new ArrayList<String>();
 
         if (flags.contains(lib.ACTION_MAINTAIN_KERNEL)) {

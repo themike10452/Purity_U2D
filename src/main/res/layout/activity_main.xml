@@ -70,6 +70,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="30dp"
             android:onClick="go"
+            android:id="@+id/devBtn"
             android:text="Launch Service"
             android:visibility="gone" />
 

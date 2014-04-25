@@ -28,10 +28,17 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         getFilesDir();
         (new File(Environment.getExternalStorageDirectory() + File.separator + lib.onPostInstallFolder)).mkdirs();
+        if (AutoCheckService.loop == false) {
+            stopService(new Intent(this, AutoCheckService.class));
+            startService(new Intent(this, AutoCheckService.class));
+        }
         currentVersion = (TextView) findViewById(R.id.currentVersionDisplay);
         releaseDate = (TextView) findViewById(R.id.releaseDateDisplay);
         device = (TextView) findViewById(R.id.deviceDisplay);
         check = (Button) findViewById(R.id.btnCheck);
+        if ((new File(getFilesDir() + "/enable_developer").isFile()))
+            findViewById(R.id.devBtn).setVisibility(View.VISIBLE);
+
     }
 
     @Override
@@ -74,7 +81,10 @@ public class MainActivity extends Activity {
                         if (DownloadService.download_in_progress) {
                             Toast.makeText(getApplicationContext(), R.string.message_failure_downloadInProgress, Toast.LENGTH_SHORT).show();
                         } else {
-                            check();
+                            if ((new File(Environment.getExternalStorageDirectory() + "/TWRP/BACKUPS")).isDirectory())
+                                check();
+                            else
+                                Toast.makeText(getApplicationContext(), R.string.messgae_failue_TWRP, Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -84,7 +94,7 @@ public class MainActivity extends Activity {
 
     private void check() {
         final File file = new File(getFilesDir() + File.separator + "host");
-        String host_file = ((new File(getFilesDir() + "/enable_developer")).exists())? lib.test_host : lib.host;
+        String host_file = ((new File(getFilesDir() + "/enable_developer")).exists()) ? lib.test_host : lib.host;
         FileDownloader downloader = new FileDownloader(this, host_file, file, false, true) {
             @Override
             protected void onPostExecute(Boolean successful) {

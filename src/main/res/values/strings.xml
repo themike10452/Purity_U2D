@@ -28,6 +28,7 @@
     <string name="message_failure_serviceNA">Service unavailable</string>
     <string name="message_failure_error">Oops, something went wrong</string>
     <string name="message_failure_downloadInProgress">Download in progress!</string>
+    <string name="messgae_failue_TWRP">/sdcard/TWRP/BACKUPS/ not found</string>
 
     <string name="info_line1">Download location: %s</string>
     <string name="info_line2">Place any zip (mod, etc…) inside [ %s ] to be flashed after updating.</string>

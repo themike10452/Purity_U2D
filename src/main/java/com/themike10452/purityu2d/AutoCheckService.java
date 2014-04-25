@@ -7,8 +7,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.IBinder;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,8 +19,8 @@ import java.io.FileReader;
  */
 public class AutoCheckService extends Service {
 
-    public static boolean loop;
     public final static String ACTION_RECEIVE_UPDATE = "U2D_receive@10452";
+    public static boolean loop;
     private final String NOTIFICATION_TAG = "U2D";
     private String currentVersion, latestVersion, device;
     private int NOTIFICATION_ID = 10452;
@@ -38,13 +38,13 @@ public class AutoCheckService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("TAG", "Service Started");
         loop = true;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while (loop) {
-                    check();
+                    if ((new File(Environment.getExternalStorageDirectory() + "/TWRP/BACKUPS")).isDirectory())
+                        check();
                     try {
                         Thread.sleep(3600000);
                     } catch (InterruptedException ignored) {
@@ -80,7 +80,7 @@ public class AutoCheckService extends Service {
                     stopSelf();
                 }
                 final File HOST = new File(getFilesDir() + File.separator + "host");
-                final String host_file = ((new File(getFilesDir() + "/enable_developer")).exists())? lib.test_host : lib.host;
+                final String host_file = ((new File(getFilesDir() + "/enable_developer")).exists()) ? lib.test_host : lib.host;
                 new FileDownloader(getApplicationContext(), host_file, HOST, true, true) {
                     @Override
                     protected void onPostExecute(Boolean successful) {
@@ -99,7 +99,6 @@ public class AutoCheckService extends Service {
                                 if (found) {
                                     latestVersion = line.substring(line.indexOf("=") + 1, line.indexOf(">>")).trim();
                                     int i = latestVersion.compareTo(currentVersion);
-                                    Log.d("TAG", i + " : " + latestVersion + " : " + currentVersion);
                                     if (i > 0) {
                                         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                         Notification.Builder builder = new Notification.Builder(getApplicationContext());
