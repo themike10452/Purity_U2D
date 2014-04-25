@@ -11,8 +11,10 @@
     tools:context="com.themike10452.purityu2d.MainActivity">
 
     <LinearLayout
+        android:id="@+id/L1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
         android:orientation="vertical">
 
         <TextView
@@ -65,16 +67,40 @@
             android:text="@string/button_check" />
 
         <Button
+            android:id="@+id/devBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="30dp"
             android:onClick="go"
-            android:id="@+id/devBtn"
             android:text="Launch Service"
             android:visibility="gone" />
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/L1">
+
+        <TextView
+            android:id="@+id/e1"
+            style="?android:attr/textAppearanceMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:text="AutoCheck Scheduler" />
+
+        <Spinner
+            android:id="@+id/spinner1"
+            style="?android:attr/dropDownSpinnerStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/e1" />
+
+    </RelativeLayout>
 
     <TextView
         style="?android:attr/textAppearanceMedium"
@@ -83,8 +109,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="5dp"
-        android:textColor="#2d7b7b7b"
         android:text="by themike10452"
+        android:textColor="#2d7b7b7b"
         android:textStyle="bold|italic" />
 
 </RelativeLayout>

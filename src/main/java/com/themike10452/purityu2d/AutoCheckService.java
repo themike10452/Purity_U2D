@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.IBinder;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,7 +39,41 @@ public class AutoCheckService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        long tmp = -1;
+        try {
+            int i = Integer.parseInt(
+                    lib.shellOut(String.format("cat %s | grep %s", getFilesDir() + "/settings", "cycle="), "=", 1)
+            );
+            if (i == 4)
+                stopSelf();
+            else {
+                switch (i) {
+                    case 0:
+                        tmp = 3600000;
+                        break;
+                    case 1:
+                        tmp = 21600000;
+                        break;
+                    case 2:
+                        tmp = 43200000;
+                        break;
+                    case 3:
+                        tmp = 86400000;
+                        break;
+                }
+            }
+        } catch (Exception ignored) {
+            tmp = 3600000;
+        }
+        if (tmp == -1)
+            tmp = 3600000;
+
+        final long time = tmp;
+
+        Log.d("TAG", tmp + "");
+
         loop = true;
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -46,7 +81,7 @@ public class AutoCheckService extends Service {
                     if ((new File(Environment.getExternalStorageDirectory() + "/TWRP/BACKUPS")).isDirectory())
                         check();
                     try {
-                        Thread.sleep(3600000);
+                        Thread.sleep(time);
                     } catch (InterruptedException ignored) {
                     }
                 }

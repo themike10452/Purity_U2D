@@ -7,7 +7,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,18 +18,22 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
+import eu.chainfire.libsuperuser.Shell;
+
 
 public class MainActivity extends Activity {
 
     private TextView currentVersion, releaseDate, device;
     private String codename, dateTag;
     private Button check;
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getFilesDir();
+        activity = this;
         (new File(Environment.getExternalStorageDirectory() + File.separator + lib.onPostInstallFolder)).mkdirs();
         if (AutoCheckService.loop == false) {
             stopService(new Intent(this, AutoCheckService.class));
@@ -36,6 +43,56 @@ public class MainActivity extends Activity {
         releaseDate = (TextView) findViewById(R.id.releaseDateDisplay);
         device = (TextView) findViewById(R.id.deviceDisplay);
         check = (Button) findViewById(R.id.btnCheck);
+        final Spinner spinner = ((Spinner) findViewById(R.id.spinner1));
+        spinner.setAdapter(
+                new ArrayAdapter<String>(
+                        getApplicationContext(),
+                        android.R.layout.simple_spinner_dropdown_item,
+                        getResources().getStringArray(R.array.autocheck_ops)
+                )
+        );
+        try {
+            spinner.setSelection(
+                    Integer.parseInt(
+                            lib.shellOut(
+                                    String.format("cat %s | grep %s", getFilesDir() + "/settings", "cycle="), "=", 1)
+                                    .trim()
+                    )
+            );
+        } catch (Exception ignored) {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    Shell.SH.run(String.format("echo cycle=%s > %s", 0, getFilesDir() + "/settings"));
+                    spinner.setSelection(0);
+                    return null;
+                }
+            }.execute();
+        }
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, final int i, long l) {
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        Shell.SH.run(String.format("echo cycle=%s > %s", i, getFilesDir() + "/settings"));
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        stopService(new Intent(activity, AutoCheckService.class));
+                        if (i != 4)
+                            startService(new Intent(activity, AutoCheckService.class));
+                    }
+                }.execute();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         if ((new File(getFilesDir() + "/enable_developer").isFile()))
             findViewById(R.id.devBtn).setVisibility(View.VISIBLE);
 

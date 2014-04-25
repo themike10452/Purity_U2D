@@ -30,6 +30,16 @@
     <string name="message_failure_downloadInProgress">Download in progress!</string>
     <string name="messgae_failue_TWRP">/sdcard/TWRP/BACKUPS/ not found</string>
 
+    <string name="text_AutoCheck">AutoCheck Scheduler</string>
+
+    <string-array name="autocheck_ops">
+        <item>Once every 1 hour</item>
+        <item>Once every 6 hours</item>
+        <item>Once every 12 hours</item>
+        <item>Once every 24 hours</item>
+        <item>OFF</item>
+    </string-array>
+
     <string name="info_line1">Download location: %s</string>
     <string name="info_line2">Place any zip (mod, etc…) inside [ %s ] to be flashed after updating.</string>
     <string name="info_line3">When the download is complete click on the shown notification to reboot and install the update.</string>
