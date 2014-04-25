@@ -66,6 +66,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
         android:onClick="go"
+        android:visibility="gone"
         android:text="Launch Service" />
 
 </LinearLayout>
