@@ -17,6 +17,8 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import eu.chainfire.libsuperuser.Shell;
+
 public class DownloadService extends Service {
 
 
@@ -135,7 +137,7 @@ public class DownloadService extends Service {
                         new AsyncTask<Void, Void, Void>() {
                             @Override
                             protected Void doInBackground(Void... voids) {
-                                //Shell.SU.run("reboot recovery");
+                                Shell.SU.run("reboot recovery");
                                 return null;
                             }
                         }.execute();
