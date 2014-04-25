@@ -8,7 +8,12 @@
     <string name="title_device">Device</string>
     <string name="title_notification">Purity OTA Update</string>
 
+    <string name="subtitle_buildNotes">New build notes</string>
+
     <string name="button_check">Check for Update</string>
+
+    <string name="checkbox_maintainKernel">Maintain kernel after update</string>
+    <string name="checkbox_wipeCache">Wipe Cache and Dalvik</string>
 
     <string name="message_noUpdate">You have the latest version</string>
     <string name="message_update">New version available</string>

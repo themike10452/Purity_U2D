@@ -71,6 +71,40 @@
 
         </RelativeLayout>
 
+        <LinearLayout
+            android:id="@+id/notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_vertical_margin">
+
+            <TextView
+                android:id="@+id/head"
+                style="?android:attr/textAppearanceSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/subtitle_buildNotes"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/noteDisplay"
+                style="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="italic" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_height"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@color/separator_color" />
+
         <TextView
             android:id="@+id/message_downloading"
             style="?android:attr/textAppearanceMedium"
@@ -81,51 +115,48 @@
             android:visibility="gone" />
 
         <LinearLayout
-            android:orientation="vertical"
             android:id="@+id/options"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp">
+            android:orientation="vertical">
 
             <CheckBox
                 android:id="@+id/kmCB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:layout_marginBottom="5dp"
-                android:text="Maintain kernel after update" />
+                android:text="@string/checkbox_maintainKernel" />
 
             <CheckBox
                 android:id="@+id/cdCB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/kmCB"
                 android:layout_marginBottom="5dp"
-                android:text="Wipe Cache and Dalvik" />
+                android:text="@string/checkbox_wipeCache" />
 
         </LinearLayout>
     </LinearLayout>
 
     <ScrollView
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
+        android:layout_height="150dp"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/drawable_1">
+        android:background="@drawable/drawable_1"
+        android:paddingBottom="10dp"
+        android:paddingLeft="7dp"
+        android:paddingRight="7dp"
+        android:paddingTop="10dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp">
+            android:layout_height="wrap_content">
 
             <RelativeLayout
                 android:id="@+id/line1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginLeft="7dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginRight="5dp">
+                android:layout_marginBottom="5dp">
 
                 <View
                     android:id="@+id/dot1"
@@ -150,9 +181,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/line1"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="7dp"
-                android:layout_marginRight="5dp">
+                android:layout_marginBottom="5dp">
 
                 <View
                     android:id="@+id/dot2"
@@ -177,9 +206,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/line2"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="7dp"
-                android:layout_marginRight="5dp">
+                android:layout_marginBottom="5dp">
 
                 <View
                     android:id="@+id/dot3"

@@ -12,9 +12,9 @@ import android.widget.TextView;
 import java.io.File;
 
 public class DownloadActivity extends Activity {
+    public static DownloadActivity THIS;
     private Activity thisActivity;
     private String[] INF;
-    public static DownloadActivity THIS;
     private final View.OnClickListener download = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -62,6 +62,10 @@ public class DownloadActivity extends Activity {
                 )
         );
         ((TextView) findViewById(R.id.line03)).setText(getString(R.string.info_line3));
+        if (INF.length >= 4 && INF[3].trim().length() > 0)
+            ((TextView) findViewById(R.id.noteDisplay)).setText(INF[3]);
+        else
+            findViewById(R.id.notes).setVisibility(View.GONE);
     }
 
     @Override
