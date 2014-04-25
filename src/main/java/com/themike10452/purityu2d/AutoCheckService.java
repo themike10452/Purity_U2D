@@ -20,9 +20,9 @@ import java.io.FileReader;
 public class AutoCheckService extends Service {
 
     public static boolean loop;
-    public static String ACTION_RECEIVE_UPDATE = "U2D_receive@10452";
+    public final static String ACTION_RECEIVE_UPDATE = "U2D_receive@10452";
+    private final String NOTIFICATION_TAG = "U2D";
     private String currentVersion, latestVersion, device;
-    private String NOTIFICATION_TAG = "U2D";
     private int NOTIFICATION_ID = 10452;
 
     @Override
@@ -60,7 +60,7 @@ public class AutoCheckService extends Service {
         loop = false;
     }
 
-    private boolean check() {
+    private void check() {
         new AsyncTask<Void, Void, Void>() {
             private String cv;
 
@@ -123,6 +123,5 @@ public class AutoCheckService extends Service {
                 return null;
             }
         }.execute();
-        return true;
     }
 }

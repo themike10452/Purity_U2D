@@ -15,7 +15,7 @@ public class DownloadActivity extends Activity {
     private Activity thisActivity;
     private String[] INF;
     public static DownloadActivity THIS;
-    private View.OnClickListener download = new View.OnClickListener() {
+    private final View.OnClickListener download = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             if (thisActivity != null) {
@@ -31,8 +31,6 @@ public class DownloadActivity extends Activity {
             }
         }
     };
-    private Button btnDownload;
-    private TextView versionDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +43,8 @@ public class DownloadActivity extends Activity {
         thisActivity = this;
         INF = getIntent().getExtras().getString("0x0").split(">>");
 
-        btnDownload = (Button) findViewById(R.id.btnDownload);
-        versionDisplay = (TextView) findViewById(R.id.newVersion);
+        Button btnDownload = (Button) findViewById(R.id.btnDownload);
+        TextView versionDisplay = (TextView) findViewById(R.id.newVersion);
         versionDisplay.setText(INF[0]);
         btnDownload.setText(INF[1]);
         btnDownload.setOnClickListener(download);

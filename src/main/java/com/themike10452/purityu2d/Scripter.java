@@ -16,7 +16,7 @@ public class Scripter extends AsyncTask<String, Void, Void> {
 
         String serialno = (new File(Environment.getExternalStorageDirectory() + "/TWRP/BACKUPS/")).listFiles()[0].getName();
 
-        ArrayList<String> list = new ArrayList();
+        ArrayList<String> list = new ArrayList<String>();
 
         if (flags.contains(lib.ACTION_MAINTAIN_KERNEL)) {
             list.add("backup B purity_ota");
