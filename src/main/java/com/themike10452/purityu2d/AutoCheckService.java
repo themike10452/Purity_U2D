@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.IBinder;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,10 +21,9 @@ public class AutoCheckService extends Service {
 
     public final static String ACTION_RECEIVE_UPDATE = "U2D_receive@10452";
     public static boolean loop;
-    private final String NOTIFICATION_TAG = "U2D";
+    public static final int NOTIFICATION_ID = 10452;
+    public static final String NOTIFICATION_TAG = "U2D";
     private String currentVersion, latestVersion, device;
-    private int NOTIFICATION_ID = 10452;
-
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -70,15 +68,13 @@ public class AutoCheckService extends Service {
 
         final long time = tmp;
 
-        Log.d("TAG", tmp + "");
-
         loop = true;
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while (loop) {
-                    if ((new File(Environment.getExternalStorageDirectory() + "/TWRP/BACKUPS")).isDirectory())
+                    if ((new File(Environment.getExternalStorageDirectory() + "/TWRP")).isDirectory())
                         check();
                     try {
                         Thread.sleep(time);

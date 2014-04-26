@@ -138,10 +138,7 @@ public class MainActivity extends Activity {
                         if (DownloadService.download_in_progress) {
                             Toast.makeText(getApplicationContext(), R.string.message_failure_downloadInProgress, Toast.LENGTH_SHORT).show();
                         } else {
-                            if ((new File(Environment.getExternalStorageDirectory() + "/TWRP/BACKUPS")).isDirectory())
-                                check();
-                            else
-                                Toast.makeText(getApplicationContext(), R.string.messgae_failue_TWRP, Toast.LENGTH_LONG).show();
+                            check();
                         }
                     }
                 });

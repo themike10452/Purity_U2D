@@ -32,11 +32,14 @@ public class Scripter extends AsyncTask<String, Void, Void> {
         list.add("install " + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + args[0].trim());
 
         File folder = new File(Environment.getExternalStorageDirectory() + File.separator + lib.onPostInstallFolder);
-        if (folder.exists()) {
-            for (File file : folder.listFiles()) {
-                if (file.toString().contains(".zip"))
-                    list.add("install " + file.toString());
+        try {
+            if (folder.exists()) {
+                for (File file : folder.listFiles()) {
+                    if (file.toString().contains(".zip"))
+                        list.add("install " + file.toString());
+                }
             }
+        } catch (Exception ignored) {
         }
 
         if (flags.contains(lib.ACTION_MAINTAIN_KERNEL)) {
@@ -50,6 +53,8 @@ public class Scripter extends AsyncTask<String, Void, Void> {
 
         for (String line : list)
             Shell.SU.run("echo " + line + " >> /cache/recovery/openrecoveryscript");
+
+        Shell.SU.run("cat /cache/recovery/openrecoveryscript > " + Environment.getExternalStorageDirectory() + "/OpenRecoveryScript_copy.txt");
 
         return null;
     }
