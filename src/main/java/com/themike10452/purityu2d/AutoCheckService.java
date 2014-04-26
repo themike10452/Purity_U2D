@@ -7,7 +7,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.os.IBinder;
 
 import java.io.BufferedReader;
@@ -20,10 +19,11 @@ import java.io.FileReader;
 public class AutoCheckService extends Service {
 
     public final static String ACTION_RECEIVE_UPDATE = "U2D_receive@10452";
-    public static boolean loop;
     public static final int NOTIFICATION_ID = 10452;
     public static final String NOTIFICATION_TAG = "U2D";
+    public static boolean loop;
     private String currentVersion, latestVersion, device;
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -74,8 +74,7 @@ public class AutoCheckService extends Service {
             @Override
             public void run() {
                 while (loop) {
-                    if ((new File(Environment.getExternalStorageDirectory() + "/TWRP")).isDirectory())
-                        check();
+                    check();
                     try {
                         Thread.sleep(time);
                     } catch (InterruptedException ignored) {
