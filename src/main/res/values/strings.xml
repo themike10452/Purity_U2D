@@ -47,7 +47,7 @@
         <item>OFF</item>
     </string-array>
 
-    <string name="info_line1">Download location: %s</string>
+    <string name="info_line1">Download location: [ %s ]</string>
     <string name="info_line2">Place any zip (mod, etc…) inside [ %s ] to be flashed after updating.</string>
     <string name="info_line3">When the download is complete click on the shown notification to reboot and install the update.</string>
 
