@@ -23,15 +23,18 @@ import eu.chainfire.libsuperuser.Shell;
 
 public class MainActivity extends Activity {
 
+    private boolean firstRun;
     private TextView currentVersion, releaseDate, device;
     private String codename, dateTag;
     private Button check;
     private Activity activity;
+    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firstRun = true;
         getFilesDir();
         activity = this;
         (new File(Environment.getExternalStorageDirectory() + File.separator + lib.onPostInstallFolder)).mkdirs();
@@ -43,7 +46,7 @@ public class MainActivity extends Activity {
         releaseDate = (TextView) findViewById(R.id.releaseDateDisplay);
         device = (TextView) findViewById(R.id.deviceDisplay);
         check = (Button) findViewById(R.id.btnCheck);
-        final Spinner spinner = ((Spinner) findViewById(R.id.spinner1));
+        spinner = ((Spinner) findViewById(R.id.spinner1));
         spinner.setAdapter(
                 new ArrayAdapter<String>(
                         getApplicationContext(),
@@ -81,9 +84,14 @@ public class MainActivity extends Activity {
 
                     @Override
                     protected void onPostExecute(Void aVoid) {
-                        stopService(new Intent(activity, AutoCheckService.class));
-                        if (i != 4)
-                            startService(new Intent(activity, AutoCheckService.class));
+                        if (firstRun) {
+                            firstRun = !firstRun;
+                        } else {
+                            stopService(new Intent(activity, AutoCheckService.class));
+                            if (i != 4) {
+                                startService(new Intent(activity, AutoCheckService.class));
+                            }
+                        }
                     }
                 }.execute();
             }
@@ -93,6 +101,7 @@ public class MainActivity extends Activity {
 
             }
         });
+
         if ((new File(getFilesDir() + "/enable_developer").isFile()))
             findViewById(R.id.devBtn).setVisibility(View.VISIBLE);
 
