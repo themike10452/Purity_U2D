@@ -13,6 +13,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
+import eu.chainfire.libsuperuser.Shell;
+
 /**
  * Created by Mike on 4/24/2014.
  */
@@ -110,45 +112,67 @@ public class AutoCheckService extends Service {
                     stopSelf();
                 }
                 final File HOST = new File(getFilesDir() + File.separator + "host");
-                final String host_file = ((new File(getFilesDir() + "/enable_developer")).exists()) ? lib.test_host : lib.host;
+                final String host_file = ((new File(getFilesDir() + "/enable_test")).exists()) ? lib.test_host : lib.emergency_host;
+
                 new FileDownloader(getApplicationContext(), host_file, HOST, true, true) {
                     @Override
                     protected void onPostExecute(Boolean successful) {
                         super.onPostExecute(successful);
+                        String tmp = host_file;
                         if (successful) {
                             try {
-                                BufferedReader reader = new BufferedReader(new FileReader(HOST));
-                                String line;
-                                boolean found = false;
-                                while ((line = reader.readLine()) != null) {
-                                    if (line.toLowerCase().contains(device + "=")) {
-                                        found = true;
-                                        break;
-                                    }
-                                }
-                                if (found) {
-                                    latestVersion = line.substring(line.indexOf("=") + 1, line.indexOf(">>")).trim();
-                                    int i = latestVersion.compareTo(currentVersion);
-                                    if (i > 0) {
-                                        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                                        Notification.Builder builder = new Notification.Builder(getApplicationContext());
-                                        Intent notify = new Intent(ACTION_RECEIVE_UPDATE);
-                                        notify.putExtra("line", line);
-                                        PendingIntent intent = PendingIntent.getBroadcast(getApplicationContext(), 0, notify, 0);
-                                        IntentReceiver receiver = new IntentReceiver();
-                                        registerReceiver(receiver, new IntentFilter(ACTION_RECEIVE_UPDATE));
-                                        builder.setContentTitle(getString(R.string.message_update))
-                                                .setContentText(getString(R.string.message_clickReceive))
-                                                .setSmallIcon(R.drawable.purity)
-                                                .setContentIntent(intent);
-                                        manager.notify(NOTIFICATION_TAG, NOTIFICATION_ID, builder.build());
-                                    }
+                                String s = Shell.SH.run(String.format("cat %s", HOST.toString())).get(0);
+                                if (s.contains("#no_thanks#")) {
+                                    tmp = ((new File(getFilesDir() + "/enable_test")).exists()) ? lib.host : lib.host;
                                 }
                             } catch (Exception ignored) {
+                                tmp = ((new File(getFilesDir() + "/enable_test")).exists()) ? lib.host : lib.host;
+                            } finally {
+                                final String hst = tmp;
+                                new FileDownloader(getApplicationContext(), hst, HOST, true, true) {
+                                    @Override
+                                    protected void onPostExecute(Boolean successful) {
+                                        super.onPostExecute(successful);
+                                        if (successful) {
+                                            try {
+                                                BufferedReader reader = new BufferedReader(new FileReader(HOST));
+                                                String line;
+                                                boolean found = false;
+                                                while ((line = reader.readLine()) != null) {
+                                                    if (line.toLowerCase().contains(device + "=")) {
+                                                        found = true;
+                                                        break;
+                                                    }
+                                                }
+                                                reader.close();
+                                                if (found) {
+                                                    latestVersion = line.substring(line.indexOf("=") + 1, line.indexOf(">>")).trim();
+                                                    int i = latestVersion.compareTo(currentVersion);
+                                                    if (i > 0) {
+                                                        IntentReceiver receiver = new IntentReceiver();
+                                                        registerReceiver(receiver, new IntentFilter(ACTION_RECEIVE_UPDATE));
+                                                        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                                        Notification.Builder builder = new Notification.Builder(getApplicationContext());
+                                                        Intent notify = new Intent(ACTION_RECEIVE_UPDATE);
+                                                        notify.putExtra("line", line);
+                                                        PendingIntent intent = PendingIntent.getBroadcast(getApplicationContext(), 0, notify, 0);
+                                                        builder.setContentTitle(getString(R.string.message_update))
+                                                                .setContentText(getString(R.string.message_clickReceive))
+                                                                .setSmallIcon(R.drawable.purity)
+                                                                .setContentIntent(intent);
+                                                        manager.notify(NOTIFICATION_TAG, NOTIFICATION_ID, builder.build());
+                                                    }
+                                                }
+                                            } catch (Exception ignored) {
+                                            }
+                                        }
+                                    }
+                                }.execute();
                             }
                         }
                     }
                 }.execute();
+
 
                 return null;
             }

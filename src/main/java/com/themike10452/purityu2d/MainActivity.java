@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
     private Button check;
     private Activity activity;
     private Spinner spinner;
+    private Activity thisActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +111,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+        thisActivity = this;
         new AsyncTask<Void, Void, Void>() {
             private String cv
                     ,
@@ -156,16 +158,34 @@ public class MainActivity extends Activity {
     }
 
     private void check() {
+        final String host_file = ((new File(getFilesDir() + "/enable_test")).exists()) ? lib.test_host : lib.emergency_host;
         final File file = new File(getFilesDir() + File.separator + "host");
-        String host_file = ((new File(getFilesDir() + "/enable_developer")).exists()) ? lib.test_host : lib.host;
-        FileDownloader downloader = new FileDownloader(this, host_file, file, false, true) {
+        FileDownloader fileDownloader = new FileDownloader(this, host_file, file, false, true) {
             @Override
             protected void onPostExecute(Boolean successful) {
                 super.onPostExecute(successful);
-                if (successful) process(file);
+                if (successful) {
+                    String tmp = host_file;
+                    try {
+                        String s = Shell.SH.run(String.format("cat %s", file.toString())).get(0);
+                        if (s.contains("#no_thanks#"))
+                            tmp = ((new File(getFilesDir() + "/enable_test")).exists()) ? lib.test_host : lib.host;
+                    } catch (Exception ignored) {
+                        tmp = ((new File(getFilesDir() + "/enable_test")).exists()) ? lib.test_host : lib.host;
+                    }
+                    final String hst = tmp;
+                    FileDownloader downloader = new FileDownloader(thisActivity, hst, file, false, true) {
+                        @Override
+                        protected void onPostExecute(Boolean successful) {
+                            super.onPostExecute(successful);
+                            if (successful) process(file);
+                        }
+                    };
+                    downloader.execute();
+                }
             }
         };
-        downloader.execute();
+        fileDownloader.execute();
     }
 
     private void process(File file) {

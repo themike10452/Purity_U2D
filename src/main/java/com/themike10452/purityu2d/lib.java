@@ -16,6 +16,8 @@ public class lib {
     public static String devicePropTag = "ro.product.device=";
     public static String modelPropTag = "ro.product.model=";
 
+    public static String emergency_host = "https://dl.dropboxusercontent.com/s/w9lp0xxfyxmvsiv/purity_emergency.txt?dl=1";
+
     public static String FLAG_ACTION_REBOOT = "reboot_recovery";
 
     public static String ACTION_CLEAR_CACHE = "_CK_";
