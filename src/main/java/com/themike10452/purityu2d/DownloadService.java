@@ -14,8 +14,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.Toast;
+
+import java.io.File;
 
 import eu.chainfire.libsuperuser.Shell;
 
@@ -54,8 +55,6 @@ public class DownloadService extends Service {
             if (intent.getExtras().getBoolean("0x3"))
                 OPTIONS += lib.ACTION_CLEAR_CACHE;
         }
-        Log.d("TAG", OPTIONS);
-
         if (zip_name != null && http_url != null) {
             Receiver receiver = new Receiver();
             registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_NOTIFICATION_CLICKED));
@@ -68,8 +67,15 @@ public class DownloadService extends Service {
                     .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
                     .setDescription(zip_name.trim())
                     .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, zip_name.trim());
-            queueID = downloadManager.enqueue(request);
-            download_in_progress = true;
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + zip_name.trim());
+            if (file.isFile())
+                file.delete();
+            try {
+                queueID = downloadManager.enqueue(request);
+                download_in_progress = true;
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), R.string.message_failure_URL, Toast.LENGTH_LONG).show();
+            }
         }
         return START_STICKY;
     }
@@ -89,6 +95,19 @@ public class DownloadService extends Service {
             String action = intent.getAction();
             if (action.equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
                 download_in_progress = false;
+                boolean md5_matches = true;
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + zip_name.trim());
+                String md5check, md5sum;
+                try {
+                    String device = Shell.SU.run(String.format("cat %s | grep %s", lib.buildProp, lib.devicePropTag)).get(0).split("=")[1].trim();
+                    md5check = Shell.SH.run(String.format("cat %s | grep %s", getFilesDir() + "/host", device + "_md5=")).get(0).split("=")[1].trim();
+                    md5sum = Shell.SH.run("md5sum " + file.toString()).get(0).split(" ")[0].trim();
+                    if (!md5sum.equals(md5check))
+                        md5_matches = false;
+                } catch (Exception ignored) {
+                    md5sum = "";
+                }
+
                 DownloadManager.Query query = new DownloadManager.Query();
                 query.setFilterById(queueID);
                 Cursor c = downloadManager.query(query);
@@ -99,10 +118,16 @@ public class DownloadService extends Service {
                         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, notify, 0);
                         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                         Notification.Builder builder = new Notification.Builder(getApplicationContext());
-                        builder.setContentTitle(getString(R.string.message_downloadComplete))
-                                .setSmallIcon(R.drawable.purity)
-                                .setContentText(getString(R.string.message_clickInstall))
-                                .setContentIntent(pendingIntent);
+                        if (md5_matches) {
+                            builder.setContentTitle(getString(R.string.message_downloadComplete))
+                                    .setSmallIcon(R.drawable.purity)
+                                    .setContentText(getString(R.string.message_clickInstall))
+                                    .setContentIntent(pendingIntent);
+                        } else {
+                            builder.setContentTitle(getString(R.string.messgae_failure_badDownload))
+                                    .setSmallIcon(R.drawable.purity)
+                                    .setContentText(getString(R.string.messgae_failure_badMD5) + String.format(" %s", md5sum));
+                        }
                         manager.notify(NOTIFICATION_TAG, NOTIFICATION_ID, builder.build());
                         try {
                             DownloadActivity activity = DownloadActivity.THIS;

@@ -2,6 +2,7 @@ package com.themike10452.purityu2d;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -15,7 +16,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 import eu.chainfire.libsuperuser.Shell;
 
@@ -32,11 +36,64 @@ public class DownloadActivity extends Activity {
                 intent.putExtra("0x1", INF[2]);
                 intent.putExtra("0x2", ((CheckBox) findViewById(R.id.kmCB)).isChecked());
                 intent.putExtra("0x3", ((CheckBox) findViewById(R.id.cdCB)).isChecked());
-                (findViewById(R.id.button1Layout)).setVisibility(View.GONE);
-                (findViewById(R.id.options)).setVisibility(View.GONE);
-                (findViewById(R.id.message_downloading)).setVisibility(View.VISIBLE);
+                findViewById(R.id.button1Layout).setVisibility(View.GONE);
+                findViewById(R.id.options).setVisibility(View.GONE);
+                findViewById(R.id.lower_sep).setVisibility(View.GONE);
+                findViewById(R.id.message_downloading).setVisibility(View.VISIBLE);
                 startService(intent);
             }
+        }
+    };
+
+    private View.OnClickListener DisplayChangelog = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            new AsyncTask<Void, Void, Boolean>() {
+                Dialog dialog;
+
+                @Override
+                protected void onPreExecute() {
+                    dialog = new Dialog(thisActivity);
+                    dialog.setTitle("ChangeLog");
+                    dialog.setContentView(R.layout.changelog_layout);
+                    dialog.setCancelable(true);
+                    super.onPreExecute();
+                }
+
+                @Override
+                protected Boolean doInBackground(Void... voids) {
+                    final File file = new File(getFilesDir() + File.separator + "host");
+                    BufferedReader reader = null;
+                    try {
+                        reader = new BufferedReader(new FileReader(file));
+                        StringBuffer buffer = new StringBuffer();
+                        while (!(reader.readLine()).trim().equals("<changelog>")) {
+                            // keep reading
+                        }
+                        String line;
+                        while ((line = reader.readLine()) != null && !line.trim().equals("</changelog>")) {
+                            buffer.append(line + "\n");
+                        }
+                        ((TextView) dialog.findViewById(R.id.log)).setText(buffer.toString());
+                        reader.close();
+                        return true;
+                    } catch (Exception e) {
+                        return false;
+                    } finally {
+                        try {
+                            reader.close();
+                        } catch (IOException e) {
+                        }
+                    }
+                }
+
+                @Override
+                protected void onPostExecute(Boolean b) {
+                    super.onPostExecute(b);
+                    if (b)
+                        dialog.show();
+                }
+            }.execute();
         }
     };
 
@@ -52,9 +109,10 @@ public class DownloadActivity extends Activity {
         INF = getIntent().getExtras().getString("0x0").split(">>");
 
         Button btnDownload = (Button) findViewById(R.id.btnDownload);
+        Button btnChglog = (Button) findViewById(R.id.btnChangelog);
         TextView versionDisplay = (TextView) findViewById(R.id.newVersion);
         versionDisplay.setText(INF[0]);
-        btnDownload.setText(INF[1]);
+        btnDownload.setText(INF[1].trim());
         btnDownload.setOnClickListener(download);
         ((TextView) findViewById(R.id.line01)).setText(
                 String.format(
@@ -63,6 +121,7 @@ public class DownloadActivity extends Activity {
                                 + File.separator + INF[1].trim()
                 )
         );
+        btnChglog.setOnClickListener(DisplayChangelog);
         ((TextView) findViewById(R.id.line02)).setText(
                 String.format(
                         getString(R.string.info_line2),
@@ -71,7 +130,7 @@ public class DownloadActivity extends Activity {
         );
         ((TextView) findViewById(R.id.line03)).setText(getString(R.string.info_line3));
         if (INF.length >= 4 && INF[3].trim().length() > 0)
-            ((TextView) findViewById(R.id.noteDisplay)).setText(INF[3]);
+            ((TextView) findViewById(R.id.noteDisplay)).setText(INF[3].trim());
         else
             findViewById(R.id.notes).setVisibility(View.GONE);
 

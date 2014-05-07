@@ -13,6 +13,7 @@
     <string name="button_check">Check for Update</string>
     <string name="button_proceed">Understood, please proceed</string>
     <string name="button_leave">Leave</string>
+    <string name="button_dismiss">Dismiss</string>
 
     <string name="checkbox_maintainKernel">Maintain kernel after update</string>
     <string name="checkbox_wipeCache">Wipe Cache and Dalvik</string>
@@ -30,6 +31,9 @@
     <string name="message_failure_serviceNA">Service unavailable</string>
     <string name="message_failure_error">Oops, something went wrong</string>
     <string name="message_failure_downloadInProgress">Download in progress!</string>
+    <string name="message_failure_URL">Malformed download URL!</string>
+    <string name="messgae_failure_badDownload">Corrupted download detected</string>
+    <string name="messgae_failure_badMD5">Bad MD5</string>
     <string name="messgae_failue_TWRP">TWRP not detected, Auto-install will not work. You may proceed and install the ROM zip manually from recovery. You will find the zip file in your Download folder</string>
     <string name="message_failure_su">Failed to get SUPERUSER access!</string>
 

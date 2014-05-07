@@ -9,7 +9,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.themike10452.purityu2d.DownloadActivity">
 
+    <ScrollView
+        android:layout_above="@+id/notesSection"
+        android:id="@+id/L00"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+
     <LinearLayout
+        android:id="@+id/L0"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -56,11 +63,11 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:textSize="16dp"
                 android:background="@drawable/button_color"
                 android:gravity="left|center_vertical"
                 android:paddingLeft="10dp"
-                android:paddingRight="40dp"/>
+                android:paddingRight="40dp"
+                android:textSize="16dp" />
 
             <ImageView
                 android:id="@+id/imageView"
@@ -96,11 +103,13 @@
                 style="?android:attr/textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="14dp"
                 android:textStyle="italic" />
 
         </LinearLayout>
 
         <View
+            android:id="@+id/lower_sep"
             android:layout_width="match_parent"
             android:layout_height="@dimen/separator_height"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
@@ -113,8 +122,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_margin="20dp"
             android:text="@string/messgage_downloading"
             android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btnChangelog"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp"
+            android:layout_weight="1"
+            android:text="Changelog" />
 
         <LinearLayout
             android:id="@+id/options"
@@ -139,10 +159,14 @@
         </LinearLayout>
     </LinearLayout>
 
+    </ScrollView>
+
     <ScrollView
+        android:id="@+id/notesSection"
         android:layout_width="wrap_content"
         android:layout_height="150dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:background="@drawable/drawable_1"
         android:paddingBottom="10dp"
         android:paddingLeft="7dp"

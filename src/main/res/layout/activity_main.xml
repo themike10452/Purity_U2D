@@ -90,7 +90,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
-            android:text="AutoCheck Scheduler" />
+            android:text="@string/text_AutoCheck" />
 
         <Spinner
             android:id="@+id/spinner1"
