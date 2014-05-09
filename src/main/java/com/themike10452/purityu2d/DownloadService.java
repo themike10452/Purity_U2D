@@ -62,19 +62,21 @@ public class DownloadService extends Service {
             registerReceiver(receiver, new IntentFilter(lib.FLAG_ACTION_REBOOT));
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).mkdirs();
             downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(http_url.trim()));
-            request.setTitle(getString(R.string.title_notification))
-                    .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
-                    .setDescription(zip_name.trim())
-                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, zip_name.trim());
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + zip_name.trim());
-            if (file.isFile())
-                file.delete();
             try {
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(http_url.trim()));
+                request.setTitle(getString(R.string.title_notification))
+                        .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
+                        .setDescription(zip_name.trim())
+                        .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, zip_name.trim());
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + zip_name.trim());
+                if (file.isFile())
+                    file.delete();
                 queueID = downloadManager.enqueue(request);
                 download_in_progress = true;
-            } catch (Exception e) {
+            } catch (IllegalArgumentException e) {
                 Toast.makeText(getApplicationContext(), R.string.message_failure_URL, Toast.LENGTH_LONG).show();
+                DownloadActivity activity = DownloadActivity.THIS;
+                activity.updateMessage(R.string.message_failure_URL);
             }
         }
         return START_STICKY;
