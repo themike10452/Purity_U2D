@@ -64,6 +64,7 @@
             style="?android:attr/buttonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/button_color"
             android:text="@string/button_check" />
 
         <Button
@@ -78,10 +79,69 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/L2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/L1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_showMoreOptions"
+            style="?android:attr/buttonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/button_color"
+            android:padding="15dp"
+            android:text="@string/button_showMoreOptions"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <LinearLayout
+            android:id="@+id/hiddenOpts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/separator_color" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="vertical">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_color"
+                    android:text="Install from local ROM zip" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="3dp" />
+
+                <Button
+                    android:id="@+id/btn_downloadLatest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_color"
+                    android:text="Download the latest ROM zip" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/L1">
+        android:layout_below="@+id/L2">
 
         <TextView
             android:id="@+id/e1"
@@ -89,16 +149,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
             android:text="@string/text_AutoCheck" />
 
         <Spinner
             android:id="@+id/spinner1"
-            style="?android:attr/dropDownSpinnerStyle"
+            style="?android:attr/spinnerItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_toRightOf="@+id/e1" />
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/e1" />
 
     </RelativeLayout>
 
@@ -107,7 +167,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_margin="5dp"
         android:text="by themike10452"
         android:textColor="#2d7b7b7b"

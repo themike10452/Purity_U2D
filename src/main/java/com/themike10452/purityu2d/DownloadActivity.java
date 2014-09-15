@@ -19,7 +19,6 @@ import android.widget.TextView;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 
 import eu.chainfire.libsuperuser.Shell;
 
@@ -66,23 +65,24 @@ public class DownloadActivity extends Activity {
                     BufferedReader reader = null;
                     try {
                         reader = new BufferedReader(new FileReader(file));
-                        StringBuffer buffer = new StringBuffer();
+                        StringBuilder builder = new StringBuilder();
                         while (!(reader.readLine()).trim().equals("<changelog>")) {
                             // keep reading
                         }
                         String line;
                         while ((line = reader.readLine()) != null && !line.trim().equals("</changelog>")) {
-                            buffer.append(line + "\n");
+                            builder.append(line + "\n");
                         }
-                        ((TextView) dialog.findViewById(R.id.log)).setText(buffer.toString());
+                        ((TextView) dialog.findViewById(R.id.log)).setText(builder.toString());
                         reader.close();
                         return true;
                     } catch (Exception e) {
                         return false;
                     } finally {
                         try {
-                            reader.close();
-                        } catch (IOException e) {
+                            if (reader != null)
+                                reader.close();
+                        } catch (Exception ignored) {
                         }
                     }
                 }
@@ -107,6 +107,12 @@ public class DownloadActivity extends Activity {
 
         thisActivity = this;
         INF = getIntent().getExtras().getString("0x0").split(">>");
+
+        String customTitle = getIntent().getExtras().getString("custom_title");
+
+        if (customTitle != null) {
+            ((TextView) findViewById(R.id.title)).setText(customTitle.trim());
+        }
 
         Button btnDownload = (Button) findViewById(R.id.btnDownload);
         Button btnChglog = (Button) findViewById(R.id.btnChangelog);
