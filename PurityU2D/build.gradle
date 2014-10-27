@@ -1,0 +1,43 @@
+apply plugin: 'android'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.1.0"
+
+    lintOptions {
+        checkReleaseBuilds true
+    }
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 19
+        versionCode 6
+        versionName "5.0"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("C:\\Users\\Michael\\AndroidStudioProjects\\KeyStore\\PurityU2D.jks")
+            storePassword "vengeance"
+            keyAlias "PurityU2D"
+            keyPassword "vengeance"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+        debug {
+            signingConfig signingConfigs.release
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}

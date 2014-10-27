@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.themike10452.purityu2d">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name="lb.themike10452.PurityU2D.Main"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="lb.themike10452.PurityU2D.Settings"
+            android:label="@string/activity_settings"
+            android:parentActivityName="lb.themike10452.PurityU2D.Main"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="lb.themike10452.PurityU2D.FileSelector.FileBrowser"
+            android:label="@string/activity_fileBrowser"
+            android:screenOrientation="portrait" />
+
+        <service
+            android:name="lb.themike10452.PurityU2D.Services.BackgroundAutoCheckService"
+            android:enabled="true"
+            android:singleUser="true" />
+
+        <receiver
+            android:name="lb.themike10452.PurityU2D.BootCompleteBroadcastReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>
