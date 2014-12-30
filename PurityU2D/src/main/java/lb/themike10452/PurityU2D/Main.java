@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.UnderlineSpan;
@@ -33,7 +35,6 @@ import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,13 +50,17 @@ import lb.themike10452.PurityU2D.Services.BackgroundAutoCheckService;
 /**
  * Created by Mike on 9/19/2014.
  */
-public class Main extends Activity {
+public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListener {
 
     public static SharedPreferences preferences;
     public static boolean running;
     private String DEVICE = Build.DEVICE;
     private String DEVICE_PART, CHANGELOG;
     private Tools tools;
+    private TextView tag;
+    private LinearLayout main;
+    private SwipeRefreshLayout refreshLayout;
+
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -75,6 +80,10 @@ public class Main extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.green2));
+        }
+
         //final Tools tools = Tools.getInstance() == null ? new Tools(this) : Tools.getInstance();
         final Tools tools = new Tools(this);
         this.tools = tools;
@@ -82,30 +91,56 @@ public class Main extends Activity {
         preferences = getSharedPreferences("Settings", MODE_MULTI_PROCESS);
         running = true;
 
-        final LinearLayout main = ((LinearLayout) findViewById(R.id.main));
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
+        refreshLayout.setColorSchemeResources(R.color.green, android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        refreshLayout.setOnRefreshListener(this);
 
-        final View v1 = LayoutInflater.from(Main.this).inflate(R.layout.kernel_info_layout, null);
-        ((TextView) v1.findViewById(R.id.text)).setText(tools.getFormattedKernelVersion());
+        main = ((LinearLayout) findViewById(R.id.main));
 
-        final TextView tag = new TextView(Main.this);
-        tag.setTextAppearance(Main.this, android.R.style.TextAppearance_Small);
-        tag.setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"), Typeface.BOLD);
-        tag.setTextSize(10f);
+        main.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                chuckNorris();
+            }
+        }, 10);
 
-        final Card card1 = new Card(Main.this, getString(R.string.card_title_installedKernel), tag, false, v1);
-        card1.getPARENT().setAnimation(getIntroSet(1000, 0));
-
-        main.addView(card1.getPARENT());
-        card1.getPARENT().animate();
-
-        final ProgressBar progressBar = new ProgressBar(Main.this);
+        /*final ProgressBar progressBar = new ProgressBar(Main.this);
         progressBar.setAnimation(getIntroSet(1000, 400));
         main.addView(progressBar);
-        progressBar.animate();
+        progressBar.animate();*/
 
+        //chuckNorris();
+
+    }
+
+    private void chuckNorris() {
         new AsyncTask<Void, Void, Boolean>() {
             Card card;
             boolean DEVICE_SUPPORTED;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                refreshLayout.setRefreshing(true);
+                if (main.getChildCount() > 0) {
+                    main.removeAllViews();
+                }
+
+                View v1 = LayoutInflater.from(Main.this).inflate(R.layout.rom_info_layout, null);
+                ((TextView) v1.findViewById(R.id.text)).setText(Tools.getBuildVersion());
+
+                tag = new TextView(Main.this);
+                tag.setTextAppearance(Main.this, android.R.style.TextAppearance_Small);
+                tag.setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"), Typeface.BOLD);
+                tag.setTextSize(10f);
+
+                Card card1 = new Card(Main.this, getString(R.string.card_title_installedROM), tag, false, v1);
+                card1.getPARENT().setAnimation(getIntroSet(1000, 0));
+
+                main.addView(card1.getPARENT());
+                card1.getPARENT().animate();
+            }
 
             @Override
             protected Boolean doInBackground(Void... voids) {
@@ -131,13 +166,7 @@ public class Main extends Activity {
 
                 tag.setText(preferences.getString(Keys.KEY_SETTINGS_ROMBASE, getString(R.string.undefined)).toUpperCase());
 
-                progressBar.postOnAnimation(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
-                progressBar.startAnimation(getOutroSet(600, 0));
+                refreshLayout.setRefreshing(false);
 
                 if (!success) {
                     displayOnScreenMessage(main, R.string.msg_failed_try_again);
@@ -149,26 +178,61 @@ public class Main extends Activity {
                     return;
                 }
 
-                Tools.sniffKernels(DEVICE_PART);
+                try {
+                    if (Tools.getMinVer(DEVICE_PART) != null && Tools.getMinVer(DEVICE_PART) > Double.parseDouble(Tools.retainDigits(getPackageManager().getPackageInfo(getPackageName(), 0).versionName))) {
+                        new AlertDialog.Builder(Main.this)
+                                .setMessage(R.string.msg_updateRequired)
+                                .setTitle(R.string.msgTitle_versionObs)
+                                .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        try {
+                                            Intent intent = getPackageManager().getLaunchIntentForPackage("com.android.vending");
+                                            ComponentName comp = new ComponentName("com.android.vending", "com.google.android.finsky.activities.LaunchUrlHandlerActivity"); // package name and activity
+                                            intent.setComponent(comp);
+                                            intent.setData(Uri.parse("market://details?id=" + getPackageName()));
+                                            startActivity(intent);
+                                        } catch (Exception ignored) {
 
-                if (ROMManager.getInstance().getProperKernel(getApplicationContext()) == null) {
-                    if (!ROMManager.baseMatchedOnce) {
-                        displayOnScreenMessage(main, getString(R.string.msg_noKernelForYourROM, preferences.getString(Keys.KEY_SETTINGS_ROMBASE, "").toUpperCase(), DEVICE.toUpperCase()));
-                        return;
-                    } else if (!ROMManager.apiMatchedOnce) {
-                        displayOnScreenMessage(main, getString(R.string.msg_noKernelForYourROM, preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").toUpperCase(), preferences.getString(Keys.KEY_SETTINGS_ROMBASE, "").toUpperCase()));
+                                        }
+                                    }
+                                })
+                                .setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                Main.this.finish();
+                                            }
+                                        }
+                                )
+                                .show();
                         return;
                     }
-                    return;
+                } catch (Exception ignored) {
+
                 }
 
-                if (Tools.INSTALLED_ROM_VERSION.equalsIgnoreCase(ROMManager.getInstance().getProperKernel(getApplicationContext()).getVERSION())) {
+                Tools.sniffBuilds(DEVICE_PART);
+
+                if (BuildManager.getInstance().getProperBuild(getApplicationContext()) == null) {
+                    if (!BuildManager.baseMatchedOnce) {
+                        displayOnScreenMessage(main, getString(R.string.msg_noROMForYou, preferences.getString(Keys.KEY_SETTINGS_ROMBASE, "").toUpperCase(), DEVICE.toUpperCase()));
+                        return;
+                    } else if (!BuildManager.apiMatchedOnce) {
+                        displayOnScreenMessage(main, getString(R.string.msg_noROMForYou, preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").toUpperCase(), DEVICE.toUpperCase()));
+                        return;
+                    } else {
+                        displayOnScreenMessage(main, getString(R.string.msg_noROMForYou, preferences.getString(Keys.KEY_SETTINGS_ROMBASE, "").toUpperCase() + " " + preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").toUpperCase(), DEVICE.toUpperCase()));
+                        return;
+                    }
+                }
+
+                if (Tools.INSTALLED_ROM_VERSION.equalsIgnoreCase(BuildManager.getInstance().getProperBuild(getApplicationContext()).getVERSION())) {
                     displayOnScreenMessage(main, R.string.msg_up_to_date);
                     return;
                 }
 
-                View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.new_kernel_layout, null);
-                String ver = ROMManager.getInstance().getProperKernel(getApplicationContext()).getVERSION();
+                View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.new_rom_layout, null);
+                String ver = BuildManager.getInstance().getProperBuild(getApplicationContext()).getVERSION();
 
                 ((TextView) v.findViewById(R.id.text)).setText(ver);
 
@@ -215,17 +279,7 @@ public class Main extends Activity {
 
             }
         }.execute();
-
-
-        //chuckNorris();
-
     }
-
-    /*private void chuckNorris() {
-        if (getIntent().getLongExtra("main", -1) == Tools.EXTRA_SHOW_INSTALL_DIALOG) {
-            getIntent().putExtra("main", -1);
-        }
-    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -240,9 +294,6 @@ public class Main extends Activity {
         switch (item.getItemId()) {
             case R.id.action_about:
                 showAboutDialog();
-                return true;
-            case R.id.action_refresh:
-                onCreate(null);
                 return true;
             case R.id.action_settings:
                 Intent i = new Intent(Main.this, Settings.class);
@@ -365,7 +416,7 @@ public class Main extends Activity {
     }
 
     private void getIt() {
-        final String link = ROMManager.getInstance().getProperKernel(getApplicationContext()).getHTTPLINK();
+        final String link = BuildManager.getInstance().getProperBuild(getApplicationContext()).getHTTPLINK();
         if (link != null) {
             final boolean b = preferences.getBoolean(Keys.KEY_SETTINGS_USEANDM, false);
             String destination = preferences
@@ -396,7 +447,7 @@ public class Main extends Activity {
                         } else {
                             d = builder.setTitle(R.string.dialog_title_md5mismatch)
                                     .setCancelable(false)
-                                    .setMessage(getString(R.string.prompt_md5mismatch, ROMManager.getInstance().getProperKernel(getApplicationContext()).getMD5(), intent.getStringExtra("md5")))
+                                    .setMessage(getString(R.string.prompt_md5mismatch, BuildManager.getInstance().getProperBuild(getApplicationContext()).getMD5(), intent.getStringExtra("md5")))
                                     .setPositiveButton(R.string.btn_downloadAgain, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -457,7 +508,7 @@ public class Main extends Activity {
             registerReceiver(downloadHandler, new IntentFilter(Tools.EVENT_DOWNLOAD_COMPLETE));
             registerReceiver(downloadHandler, new IntentFilter(Tools.EVENT_DOWNLOADEDFILE_EXISTS));
 
-            tools.downloadFile(link, destination, ROMManager.getInstance().getProperKernel(getApplicationContext()).getZIPNAME(), ROMManager.getInstance().getProperKernel(getApplicationContext()).getMD5(), b);
+            tools.downloadFile(link, destination, BuildManager.getInstance().getProperBuild(getApplicationContext()).getZIPNAME(), BuildManager.getInstance().getProperBuild(getApplicationContext()).getMD5(), b);
         }
     }
 
@@ -686,7 +737,7 @@ public class Main extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (!tools.isDownloading)
+        if (!Tools.isDownloading)
             super.onBackPressed();
         else
             Toast.makeText(this, R.string.msg_activeDownloads, Toast.LENGTH_LONG).show();
@@ -697,5 +748,10 @@ public class Main extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         running = false;
+    }
+
+    @Override
+    public void onRefresh() {
+        chuckNorris();
     }
 }

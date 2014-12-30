@@ -8,6 +8,11 @@
 
     <style name="CustomActionBar" parent="android:Widget.Holo.Light.ActionBar">
         <item name="android:background">@color/green</item>
+        <item name="android:titleTextStyle">@style/CustomTitleText</item>
+    </style>
+
+    <style name="CustomTitleText" parent="android:TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
 </resources>

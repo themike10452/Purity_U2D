@@ -39,11 +39,11 @@ import eu.chainfire.libsuperuser.Shell;
  */
 public class Tools {
 
-    public static String EVENT_DOWNLOAD_COMPLETE = "THEMIKE10452.TOOLS.DOWNLOAD.COMPLETE";
-    public static String EVENT_DOWNLOADEDFILE_EXISTS = "THEMIKE10452.TOOLS.DOWNLOAD.FILE.EXISTS";
-    public static String EVENT_DOWNLOAD_CANCELED = "THEMIKE10452.TOOLS.DOWNLOAD.CANCELED";
-    public static String ACTION_INSTALL = "THEMIKE10452.TOOLS.KERNEL.INSTALL";
-    public static String ACTION_DISMISS = "THEMIKE10452.TOOLS.DISMISS";
+    public static String EVENT_DOWNLOAD_COMPLETE = "PURITY-U2D@THEMIKE10452.TOOLS.DOWNLOAD.COMPLETE";
+    public static String EVENT_DOWNLOADEDFILE_EXISTS = "PURITY-U2D@THEMIKE10452.TOOLS.DOWNLOAD.FILE.EXISTS";
+    public static String EVENT_DOWNLOAD_CANCELED = "PURITY-U2D@THEMIKE10452.TOOLS.DOWNLOAD.CANCELED";
+    public static String ACTION_INSTALL = "PURITY-U2D@THEMIKE10452.TOOLS.ROM.INSTALL";
+    public static String ACTION_DISMISS = "PURITY-U2D@THEMIKE10452.TOOLS.DISMISS";
 
     public static int EXTRA_SHOW_INSTALL_DIALOG = 1;
     public static boolean isDownloading;
@@ -100,7 +100,7 @@ public class Tools {
         }
     }
 
-    public static String getFormattedKernelVersion() {
+    public static String getBuildVersion() {
         INSTALLED_ROM_VERSION = "Unavailable";
         Scanner s = null;
         try {
@@ -108,7 +108,11 @@ public class Tools {
             while (s.hasNextLine()) {
                 String line = s.nextLine();
                 if (line.toLowerCase().contains("ro.build.version.incremental=")) {
-                    INSTALLED_ROM_VERSION = line.split("=")[1].trim().split("\\.")[2];
+                    try {
+                        INSTALLED_ROM_VERSION = line.split("=")[1].trim().split("\\.")[2];
+                    } catch (Exception e) {
+                        INSTALLED_ROM_VERSION = line.split("=")[1].trim();
+                    }
                     return line.split("=")[1].trim();
                 }
             }
@@ -133,6 +137,15 @@ public class Tools {
         }
 
         return -1;
+    }
+
+    public static String retainDigits(String data) {
+        String newString = "";
+        for (char c : data.toCharArray()) {
+            if (Character.isDigit(c))
+                newString += c;
+        }
+        return newString;
     }
 
     public void showRootFailDialog() {
@@ -511,14 +524,32 @@ public class Tools {
         }
     }
 
-    public static void sniffKernels(String data) {
+    public static void sniffBuilds(String data) {
         String[] parameters = data.split("\\+ROM");
-        ROMManager.getFreshInstance();
+        BuildManager.getFreshInstance();
         for (String params : parameters) {
             if (params == parameters[0])
                 continue;
-            ROMManager.getInstance().add(new ROM(params));
+            BuildManager.getInstance().add(new Build(params));
         }
+    }
+
+    public static Double getMinVer(String data) {
+        Scanner s = new Scanner(data);
+        try {
+            while (s.hasNextLine()) {
+                String line = s.nextLine();
+                if (line.startsWith("#define min_ver*")) {
+                    return Double.parseDouble(line.split("=")[1].trim());
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        } finally {
+            s.close();
+        }
+
     }
 
     public void createOpenRecoveryScript(String line, final boolean rebootAfter, final boolean append) {

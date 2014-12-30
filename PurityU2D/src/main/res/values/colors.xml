@@ -8,6 +8,7 @@
     <color name="card_shadow">#dbdbdb</color>
     <color name="card_background">#ffffff</color>
     <color name="green">#ff08ad00</color>
+    <color name="green2">#ff087800</color>
     <color name="green_translucent">#6d08ad00</color>
     <color name="black_seeThrough">#50000000</color>
 </resources>

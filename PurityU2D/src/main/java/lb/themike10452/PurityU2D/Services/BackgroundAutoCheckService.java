@@ -1,9 +1,10 @@
 package lb.themike10452.PurityU2D.Services;
 
-import android.app.IntentService;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +12,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.themike10452.purityu2d.R;
 
@@ -20,20 +21,25 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
 
+import lb.themike10452.PurityU2D.Build;
+import lb.themike10452.PurityU2D.BuildManager;
 import lb.themike10452.PurityU2D.DeviceNotSupportedException;
 import lb.themike10452.PurityU2D.Keys;
 import lb.themike10452.PurityU2D.Main;
-import lb.themike10452.PurityU2D.ROM;
-import lb.themike10452.PurityU2D.ROMManager;
 import lb.themike10452.PurityU2D.Tools;
 
 /**
  * Created by Mike on 9/26/2014.
  */
-public class BackgroundAutoCheckService extends IntentService {
+public class BackgroundAutoCheckService extends Service {
+
+    private final String ACTION = "PURITY-U2D@THEMIKE10452";
+    private PendingIntent pi;
 
     public static boolean running = false;
     private static BroadcastReceiver broadcastReceiver;
+    private AlarmManager manager;
+
     //this is the background check task
     private Runnable run = new Runnable() {
         @Override
@@ -58,7 +64,6 @@ public class BackgroundAutoCheckService extends IntentService {
             //what if at that time the phone wasn't connected to the internet? That would be bad.
             //the app will have to wait another 24 hours to check again...
             //but no! we have to find another way
-
             if (!CONNECTED && broadcastReceiver == null) { //if the phone was not connected by the time
                 //set up a broadcast receiver that detects when the phone is connected to the internet
                 broadcastReceiver = new BroadcastReceiver() {
@@ -86,10 +91,10 @@ public class BackgroundAutoCheckService extends IntentService {
             } else if (CONNECTED) { //else if the phone was connected by the time, we need to check for an update
 
                 //get installed and latest kernel info, and compare them
-                Tools.getFormattedKernelVersion();
+                Tools.getBuildVersion();
                 String installed = Tools.INSTALLED_ROM_VERSION;
-                Tools.sniffKernels(DEVICE_PART);
-                ROM properKernel = ROMManager.getInstance().getProperKernel(getApplicationContext());
+                Tools.sniffBuilds(DEVICE_PART);
+                Build properKernel = BuildManager.getInstance().getProperBuild(getApplicationContext());
                 String latest = properKernel != null ? properKernel.getVERSION() : null;
 
                 //if the user hasn't opened the app and selected which ROM base he wants (AOSP/CM)
@@ -121,7 +126,7 @@ public class BackgroundAutoCheckService extends IntentService {
     private String DEVICE_PART;
 
     public BackgroundAutoCheckService() {
-        super("BackgroundAutoCheckService");
+        super();
     }
 
     @Override
@@ -130,10 +135,9 @@ public class BackgroundAutoCheckService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-
+    public void onCreate() {
+        super.onCreate();
         //actual work starts here
-
         running = true;
 
         preferences = getSharedPreferences("Settings", MODE_MULTI_PROCESS);
@@ -150,23 +154,28 @@ public class BackgroundAutoCheckService extends IntentService {
         //extract the 'minutes' part
         String mn = pref.split(":")[1];
 
-        //parse them into integers and transform the total amount of time into seconds
-        int T = (Integer.parseInt(hr) * 3600) + (Integer.parseInt(mn) * 60);
+        //parse them into integers and transform the total amount of time into Milliseconds
+        long T = ((Integer.parseInt(hr) * 3600) + (Integer.parseInt(mn) * 60)) * 1000;
 
         //run the check task at a fixed rate
-        //I created a boolean to break the endless loop whenever I want to stop it
-        while (running) {
+        //I created a boolean to stop the alarm manager whenever I want to stop it
 
-            if (!Tools.isDownloading)
-                new Thread(run).start();
-
-            try {
-                //sleep for T milliseconds
-                Thread.sleep(T * 1000); //transform T from seconds to milliseconds
-            } catch (InterruptedException ignored) {
+        pi = PendingIntent.getBroadcast(this, 0, new Intent(ACTION), 0);
+        manager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0, T, pi);
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (!running) {
+                    unregisterReceiver(this);
+                    return;
+                }
+                if (!Tools.isDownloading) {
+                    Log.d("TAG", "new cycle");
+                    new Thread(run).start();
+                }
             }
-
-        }
+        }, new IntentFilter("PURITY-U2D@THEMIKE10452"));
     }
 
     private boolean getDevicePart() throws DeviceNotSupportedException {
@@ -179,7 +188,7 @@ public class BackgroundAutoCheckService extends IntentService {
             e.printStackTrace();
             return false;
         }
-        String pattern = String.format("<%s>", Build.DEVICE);
+        String pattern = String.format("<%s>", android.os.Build.DEVICE);
 
         boolean supported = false;
         while (s.hasNextLine()) {
@@ -191,7 +200,7 @@ public class BackgroundAutoCheckService extends IntentService {
         if (supported) {
             while (s.hasNextLine()) {
                 String line = s.nextLine();
-                if (line.equalsIgnoreCase(String.format("</%s>", Build.DEVICE)))
+                if (line.equalsIgnoreCase(String.format("</%s>", android.os.Build.DEVICE)))
                     break;
                 DEVICE_PART += line + "\n";
             }
@@ -205,12 +214,16 @@ public class BackgroundAutoCheckService extends IntentService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        return START_STICKY;
+        return START_STICKY_COMPATIBILITY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         running = false;
+        if (pi != null) try {
+            manager.cancel(pi);
+        } catch (Throwable ignored) {
+        }
     }
 }

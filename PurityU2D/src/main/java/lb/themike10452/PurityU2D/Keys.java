@@ -25,12 +25,12 @@ public class Keys {
     public static String KEY_DEFINE_AV = "android_versions";
     public static String KEY_DEFINE_BB = "build_bases";
 
-    public static String KEY_KERNEL_BASE = "_base:=";
-    public static String KEY_KERNEL_API = "_api:=";
-    public static String KEY_KERNEL_VERSION = "_version:=";
-    public static String KEY_KERNEL_ZIPNAME = "_zipname:=";
-    public static String KEY_KERNEL_HTTPLINK = "_httplink:=";
-    public static String KEY_KERNEL_MD5 = "_md5:=";
-    public static String KEY_KERNEL_test = "_testbuild:=";
+    public static String KEY_ROM_BASE = "_base:=";
+    public static String KEY_ROM_API = "_api:=";
+    public static String KEY_ROM_VERSION = "_version:=";
+    public static String KEY_ROM_ZIPNAME = "_zipname:=";
+    public static String KEY_ROM_HTTPLINK = "_httplink:=";
+    public static String KEY_ROM_MD5 = "_md5:=";
+    public static String KEY_ROM_test = "_testbuild:=";
 
 }

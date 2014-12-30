@@ -9,58 +9,58 @@ import java.util.Set;
 /**
  * Created by Mike on 10/23/2014.
  */
-public class ROMManager {
+public class BuildManager {
 
     public static boolean baseMatchedOnce = false, apiMatchedOnce = false;
 
-    private static ROMManager instance = null;
+    private static BuildManager instance = null;
 
-    private static Set<ROM> kernelSet;
+    private static Set<Build> buildSet;
 
-    public ROMManager() {
-        kernelSet = new HashSet<ROM>(5, 0.8f);
-        kernelSet.clear();
+    public BuildManager() {
+        buildSet = new HashSet<Build>(5, 0.8f);
+        buildSet.clear();
         baseMatchedOnce = false;
         instance = this;
     }
 
-    public static ROMManager getFreshInstance() {
+    public static BuildManager getFreshInstance() {
         if (instance != null) {
             baseMatchedOnce = false;
-            kernelSet.clear();
+            buildSet.clear();
             return instance;
         } else {
-            return instance = new ROMManager();
+            return instance = new BuildManager();
         }
     }
 
-    public static ROMManager getInstance() {
-        return instance == null ? new ROMManager() : instance;
+    public static BuildManager getInstance() {
+        return instance == null ? new BuildManager() : instance;
     }
 
-    public boolean add(ROM k) {
-        return kernelSet.add(k);
+    public boolean add(Build k) {
+        return buildSet.add(k);
     }
 
-    public ROM getProperKernel(Context c) {
+    public Build getProperBuild(Context c) {
         apiMatchedOnce = false;
 
-        if (kernelSet.isEmpty()) {
+        if (buildSet.isEmpty()) {
             return null;
         }
 
         SharedPreferences preferences = c.getSharedPreferences("Settings", Context.MODE_MULTI_PROCESS);
 
-        ROM res = null;
+        Build res = null;
 
-        for (ROM k : kernelSet) {
+        for (Build k : buildSet) {
             try {
                 boolean a = k.getBASE().contains(preferences.getString(Keys.KEY_SETTINGS_ROMBASE, "").trim().toUpperCase());
                 boolean b = k.getAPI().contains(preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").trim().toUpperCase());
                 if (a)
-                    baseMatchedOnce = a;
+                    baseMatchedOnce = true;
                 if (b)
-                    apiMatchedOnce = b;
+                    apiMatchedOnce = true;
                 if (a & b) {
                     if (k.isTestBuild() && !preferences.getBoolean(Keys.KEY_SETTINGS_LOOKFORBETA, true)) {
                         res = null;

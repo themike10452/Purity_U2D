@@ -28,7 +28,7 @@
     <string name="dialog_content_about">Veröffentlicht durch %1$s</string>
 
     <string name="card_title_latestVersion">Letzte Version</string>
-    <string name="card_title_installedKernel">Installierter ROM</string>
+    <string name="card_title_installedROM">Installierter ROM</string>
 
     <string name="field_filesize">Dateigröße</string>
     <string name="filed_filename">Dateiname</string>
@@ -42,10 +42,12 @@
     <string name="msg_downloadComplete">Download abgeschlossen</string>
     <string name="msg_updateFound">Eine neue Version des ROM wurde gefunden</string>
     <string name="msg_changeable">Diese Einstellung kann in den Einstellungen geändert werden</string>
-    <string name="msg_noKernelForYourROM">Es gibt keinen %1$s ROM für %2$s</string>
+    <string name="msg_noROMForYou">Es gibt keinen %1$s ROM für %2$s</string>
     <string name="msg_twrp">Die automatische Installation funktioniert nur mit TWRP Recovery. CWM wird nicht unterstützt.</string>
     <string name="msg_activeDownloads">Es läuft ein aktiver Download, Du kannst die App nicht beenden.</string>
     <string name="msg_invalidFilename">Ungültiger Dateiname</string>
+    <string name="msg_updateRequired">Please update to te latest app version from Play Store</string>
+    <string name="msgTitle_versionObs">Version obsolete</string>
 
     <string name="btn_whatsNew">Was ist neu?</string>
     <string name="btn_getIt">Jetzt herunterladen</string>

@@ -1,0 +1,10 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:colorAccent">@color/green_translucent</item>
+        <item name="android:colorPrimary">@color/green</item>
+    </style>
+
+</resources>

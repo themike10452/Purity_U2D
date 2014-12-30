@@ -23,7 +23,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/settings_info_onPostInstall"
-                android:textColor="?android:attr/textColorHint" />
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="?android:attr/textColorHint"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <TextView
