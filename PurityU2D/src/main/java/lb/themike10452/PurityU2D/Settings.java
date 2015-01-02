@@ -353,12 +353,16 @@ public class Settings extends Activity {
                             return;
 
                         final String[] choices = versions.split(",");
+                        String[] displayChoices = new String[choices.length];
+                        for (int i = 0; i < displayChoices.length; i++) {
+                            displayChoices[i] = choices[i].replace("*latest*", getString(R.string.receive_latest_version));
+                        }
                         for (int i = 0; i < choices.length; i++) {
                             choices[i] = choices[i].trim();
                         }
                         Dialog d = new AlertDialog.Builder(Settings.this)
                                 .setTitle(R.string.prompt_android_version)
-                                .setSingleChoiceItems(choices, Tools.findIndex(choices, Main.preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "null")), new DialogInterface.OnClickListener() {
+                                .setSingleChoiceItems(displayChoices, Tools.findIndex(choices, Main.preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "null")), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
                                         Main.preferences.edit().putString(Keys.KEY_SETTINGS_ROMAPI, choices[i]).apply();

@@ -84,5 +84,6 @@
     <string name="prompt_android_version">What version of Android do you like to have?</string>
     <string name="prompt_blankDefault">Leer lassen für Standard</string>
     <string name="prompt_zipExtension">Vergiss nicht die Dateiendung .zip</string>
+    <string name="receive_latest_version">Receive the latest version</string>
 
 </resources>

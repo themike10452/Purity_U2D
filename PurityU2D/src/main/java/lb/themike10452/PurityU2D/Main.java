@@ -88,7 +88,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
         final Tools tools = new Tools(this);
         this.tools = tools;
 
-        preferences = getSharedPreferences("Settings", MODE_MULTI_PROCESS);
+        preferences = getSharedPreferences(Keys.SharedPrefsKey, MODE_MULTI_PROCESS);
         running = true;
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
@@ -227,7 +227,10 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                 }
 
                 if (Tools.INSTALLED_ROM_VERSION.equalsIgnoreCase(BuildManager.getInstance().getProperBuild(getApplicationContext()).getVERSION())) {
-                    displayOnScreenMessage(main, R.string.msg_up_to_date);
+                    if (preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").equalsIgnoreCase("*latest*"))
+                        displayOnScreenMessage(main, R.string.msg_up_to_date);
+                    else
+                        displayOnScreenMessage(main, getString(R.string.msg_up_to_date) + " (" + preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "n/a") + ")");
                     return;
                 }
 
@@ -272,8 +275,10 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                     }
                 });
 
-                card = new Card(getApplicationContext(), getString(R.string.card_title_latestVersion), false, v);
-
+                if (!preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").equalsIgnoreCase("*latest*"))
+                    card = new Card(getApplicationContext(), getString(R.string.card_title_latestVersion) + " (" + preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "") + ")", false, v);
+                else
+                    card = new Card(getApplicationContext(), getString(R.string.card_title_latestVersion), false, v);
                 main.addView(card.getPARENT());
                 card.getPARENT().startAnimation(getIntroSet(1000, 200));
 
@@ -616,14 +621,17 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
         Scanner scanner = new Scanner(DEVICE_PART);
         String line, keyword = "#define";
         String[] versions = null;
+        String[] displayVersions = null;
         while (scanner.hasNextLine()) {
             line = scanner.nextLine().trim().toLowerCase();
             if (line.startsWith("#define")) {
                 if (line.length() > keyword.length()) {
                     if (line.contains(Keys.KEY_DEFINE_AV)) {
                         versions = line.split("=")[1].split(",");
+                        displayVersions = line.split("=")[1].split(",");
                         for (int i = 0; i < versions.length; i++) {
                             versions[i] = versions[i].trim();
+                            displayVersions[i] = versions[i].replace("*latest*", getString(R.string.receive_latest_version));
                         }
                         break;
                     }
@@ -643,7 +651,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
             }
             final String[] choices = versions;
             new AlertDialog.Builder(Main.this)
-                    .setSingleChoiceItems(versions, -1, new DialogInterface.OnClickListener() {
+                    .setSingleChoiceItems(displayVersions, -1, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             preferences.edit().putString(Keys.KEY_SETTINGS_ROMAPI, choices[i]).apply();

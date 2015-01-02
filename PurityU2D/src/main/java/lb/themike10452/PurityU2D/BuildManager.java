@@ -49,7 +49,7 @@ public class BuildManager {
             return null;
         }
 
-        SharedPreferences preferences = c.getSharedPreferences("Settings", Context.MODE_MULTI_PROCESS);
+        SharedPreferences preferences = c.getSharedPreferences(Keys.SharedPrefsKey, Context.MODE_MULTI_PROCESS);
 
         Build res = null;
 

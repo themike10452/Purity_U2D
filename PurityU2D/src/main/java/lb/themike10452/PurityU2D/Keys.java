@@ -5,8 +5,10 @@ package lb.themike10452.PurityU2D;
  */
 public class Keys {
 
+    public static final String SharedPrefsKey = "Settings_2";
+
     //public static String ALTERNATIVE_SOURCE = "http://pastebin.com/download.php?i=G6xhB7x9";
-    public static String DEFAULT_SOURCE = "http://pastebin.com/download.php?i=nQKVKBrR";
+    public static String DEFAULT_SOURCE = "http://pastebin.com/download.php?i=2g5HLsPy";
     public static String SOURCE_CODE = "https://github.com/themike10452/Purity_U2D";
     public static String TAG_NOTIF = "THEMIKE10452.HKU.UPDNOTIF";
 
@@ -20,7 +22,6 @@ public class Keys {
     public static String KEY_SETTINGS_USESTATICFILENAME = "_USESTATICFILENAME";
     public static String KEY_SETTINGS_LASTSTATICFILENAME = "_STATICFILENAME";
     public static String KEY_SETTINGS_LOOKFORBETA = "_LOOKFORBETA";
-
 
     public static String KEY_DEFINE_AV = "android_versions";
     public static String KEY_DEFINE_BB = "build_bases";

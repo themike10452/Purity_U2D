@@ -13,7 +13,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.themike10452.purityu2d.R;
 
@@ -140,7 +139,7 @@ public class BackgroundAutoCheckService extends Service {
         //actual work starts here
         running = true;
 
-        preferences = getSharedPreferences("Settings", MODE_MULTI_PROCESS);
+        preferences = getSharedPreferences(Keys.SharedPrefsKey, MODE_MULTI_PROCESS);
 
         //get the autocheck interval setting value
         String pref = preferences.getString(Keys.KEY_SETTINGS_AUTOCHECK_INTERVAL, "12:0");
@@ -171,7 +170,6 @@ public class BackgroundAutoCheckService extends Service {
                     return;
                 }
                 if (!Tools.isDownloading) {
-                    Log.d("TAG", "new cycle");
                     new Thread(run).start();
                 }
             }
