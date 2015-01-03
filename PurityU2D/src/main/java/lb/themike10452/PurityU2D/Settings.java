@@ -496,40 +496,48 @@ public class Settings extends Activity {
     }
 
     private boolean getDevicePart() throws DeviceNotSupportedException {
-        Scanner s;
+        Scanner s = null;
+        HttpURLConnection connection = null;
         DEVICE_PART = "";
         boolean DEVICE_SUPPORTED = false;
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(Main.preferences.getString(Keys.KEY_SETTINGS_SOURCE, Keys.DEFAULT_SOURCE)).openConnection();
-            s = new Scanner(connection.getInputStream());
-        } catch (final Exception e) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                }
-            });
-            return false;
-        }
-        String pattern = String.format("<%s>", Build.DEVICE);
-        while (s.hasNextLine()) {
-            if (s.nextLine().equalsIgnoreCase(pattern)) {
-                DEVICE_SUPPORTED = true;
-                break;
+            try {
+                connection = (HttpURLConnection) new URL(Main.preferences.getString(Keys.KEY_SETTINGS_SOURCE, Keys.DEFAULT_SOURCE)).openConnection();
+                s = new Scanner(connection.getInputStream());
+            } catch (final Exception e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                return false;
             }
-        }
-        if (DEVICE_SUPPORTED) {
-            String line;
+            String pattern = String.format("<%s>", Build.DEVICE);
             while (s.hasNextLine()) {
-                line = s.nextLine().trim();
-                if (line.equalsIgnoreCase(String.format("</%s>", Build.DEVICE)))
+                if (s.nextLine().equalsIgnoreCase(pattern)) {
+                    DEVICE_SUPPORTED = true;
                     break;
-
-                DEVICE_PART += line + "\n";
+                }
             }
-            return true;
-        } else {
-            throw new DeviceNotSupportedException();
+            if (DEVICE_SUPPORTED) {
+                String line;
+                while (s.hasNextLine()) {
+                    line = s.nextLine().trim();
+                    if (line.equalsIgnoreCase(String.format("</%s>", Build.DEVICE)))
+                        break;
+
+                    DEVICE_PART += line + "\n";
+                }
+                return true;
+            } else {
+                throw new DeviceNotSupportedException();
+            }
+        } finally {
+            if (s != null)
+                s.close();
+            if (connection != null)
+                connection.disconnect();
         }
     }
 

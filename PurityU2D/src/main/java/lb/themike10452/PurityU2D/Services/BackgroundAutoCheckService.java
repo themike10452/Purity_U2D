@@ -177,34 +177,42 @@ public class BackgroundAutoCheckService extends Service {
     }
 
     private boolean getDevicePart() throws DeviceNotSupportedException {
-        Scanner s;
+        Scanner s = null;
+        HttpURLConnection connection = null;
         DEVICE_PART = "";
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(preferences.getString(Keys.KEY_SETTINGS_SOURCE, Keys.DEFAULT_SOURCE)).openConnection();
-            s = new Scanner(connection.getInputStream());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        String pattern = String.format("<%s>", android.os.Build.DEVICE);
+            try {
+                connection = (HttpURLConnection) new URL(preferences.getString(Keys.KEY_SETTINGS_SOURCE, Keys.DEFAULT_SOURCE)).openConnection();
+                s = new Scanner(connection.getInputStream());
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+            String pattern = String.format("<%s>", android.os.Build.DEVICE);
 
-        boolean supported = false;
-        while (s.hasNextLine()) {
-            if (s.nextLine().equalsIgnoreCase(pattern)) {
-                supported = true;
-                break;
-            }
-        }
-        if (supported) {
+            boolean supported = false;
             while (s.hasNextLine()) {
-                String line = s.nextLine();
-                if (line.equalsIgnoreCase(String.format("</%s>", android.os.Build.DEVICE)))
+                if (s.nextLine().equalsIgnoreCase(pattern)) {
+                    supported = true;
                     break;
-                DEVICE_PART += line + "\n";
+                }
             }
-            return true;
-        } else {
-            throw new DeviceNotSupportedException();
+            if (supported) {
+                while (s.hasNextLine()) {
+                    String line = s.nextLine();
+                    if (line.equalsIgnoreCase(String.format("</%s>", android.os.Build.DEVICE)))
+                        break;
+                    DEVICE_PART += line + "\n";
+                }
+                return true;
+            } else {
+                throw new DeviceNotSupportedException();
+            }
+        } finally {
+            if (s != null)
+                s.close();
+            if (connection != null)
+                connection.disconnect();
         }
 
     }

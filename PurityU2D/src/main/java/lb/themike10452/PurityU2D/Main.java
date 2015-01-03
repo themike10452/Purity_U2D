@@ -345,63 +345,71 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
     }
 
     private boolean getDevicePart() throws DeviceNotSupportedException {
-        Scanner s;
+        Scanner s = null;
+        HttpURLConnection connection = null;
         DEVICE_PART = "";
         CHANGELOG = "";
         boolean DEVICE_SUPPORTED = false;
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(preferences.getString(Keys.KEY_SETTINGS_SOURCE, Keys.DEFAULT_SOURCE)).openConnection();
-            s = new Scanner(connection.getInputStream());
-        } catch (final Exception e) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                }
-            });
-            return false;
-        }
-        String pattern = String.format("<%s>", DEVICE);
-        while (s.hasNextLine()) {
-            if (s.nextLine().equalsIgnoreCase(pattern)) {
-                DEVICE_SUPPORTED = true;
-                break;
-            }
-        }
-        if (DEVICE_SUPPORTED) {
-            boolean multichangelog = false;
-            String line;
-            while (s.hasNextLine()) {
-                line = s.nextLine().trim();
-                if (line.equalsIgnoreCase(String.format("</%s>", DEVICE)))
-                    break;
-
-                if (line.equalsIgnoreCase("<changelog>")) {
-                    multichangelog = true;
-                    DEVICE_PART += line + "\n";
-                    while (s.hasNextLine() && !(line = s.nextLine()).equalsIgnoreCase("</changelog>")) {
-                        CHANGELOG += line + "\n";
-                        DEVICE_PART += line + "\n";
+            try {
+                connection = (HttpURLConnection) new URL(preferences.getString(Keys.KEY_SETTINGS_SOURCE, Keys.DEFAULT_SOURCE)).openConnection();
+                s = new Scanner(connection.getInputStream());
+            } catch (final Exception e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
                     }
-                }
-
-                DEVICE_PART += line + "\n";
+                });
+                return false;
             }
-
-            if (!multichangelog)
+            String pattern = String.format("<%s>", DEVICE);
+            while (s.hasNextLine()) {
+                if (s.nextLine().equalsIgnoreCase(pattern)) {
+                    DEVICE_SUPPORTED = true;
+                    break;
+                }
+            }
+            if (DEVICE_SUPPORTED) {
+                boolean multichangelog = false;
+                String line;
                 while (s.hasNextLine()) {
                     line = s.nextLine().trim();
+                    if (line.equalsIgnoreCase(String.format("</%s>", DEVICE)))
+                        break;
+
                     if (line.equalsIgnoreCase("<changelog>")) {
+                        multichangelog = true;
+                        DEVICE_PART += line + "\n";
                         while (s.hasNextLine() && !(line = s.nextLine()).equalsIgnoreCase("</changelog>")) {
                             CHANGELOG += line + "\n";
+                            DEVICE_PART += line + "\n";
                         }
-                        break;
                     }
+
+                    DEVICE_PART += line + "\n";
                 }
 
-            return true;
-        } else {
-            throw new DeviceNotSupportedException();
+                if (!multichangelog)
+                    while (s.hasNextLine()) {
+                        line = s.nextLine().trim();
+                        if (line.equalsIgnoreCase("<changelog>")) {
+                            while (s.hasNextLine() && !(line = s.nextLine()).equalsIgnoreCase("</changelog>")) {
+                                CHANGELOG += line + "\n";
+                            }
+                            break;
+                        }
+                    }
+
+                return true;
+            } else {
+                throw new DeviceNotSupportedException();
+            }
+        } finally {
+            if (s != null)
+                s.close();
+            if (connection != null)
+                connection.disconnect();
         }
     }
 
