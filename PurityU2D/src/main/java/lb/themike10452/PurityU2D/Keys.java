@@ -7,12 +7,11 @@ public class Keys {
 
     public static final String SharedPrefsKey = "Settings_2";
 
-    //public static String ALTERNATIVE_SOURCE = "http://pastebin.com/download.php?i=G6xhB7x9";
-    public static String DEFAULT_SOURCE = "http://pastebin.com/download.php?i=2g5HLsPy";
+    public static String DEFAULT_SOURCE = "http://www.ipaste.eu/api?act=get&frm=text&id=8593";
     public static String SOURCE_CODE = "https://github.com/themike10452/Purity_U2D";
     public static String TAG_NOTIF = "THEMIKE10452.HKU.UPDNOTIF";
 
-    public static String KEY_SETTINGS_SOURCE = "_SOURCE";
+    public static String KEY_SETTINGS_SOURCE = "_SOURCE_2";
     public static String KEY_SETTINGS_DOWNLOADLOCATION = "_DLLOCATION";
     public static String KEY_SETTINGS_USEANDM = "_USEANDDM";
     public static String KEY_SETTINGS_AUTOCHECK_ENABLED = "_ENABLEBAC";
