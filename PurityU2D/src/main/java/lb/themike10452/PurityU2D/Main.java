@@ -84,10 +84,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
             getWindow().setStatusBarColor(getResources().getColor(R.color.green2));
         }
 
-        //final Tools tools = Tools.getInstance() == null ? new Tools(this) : Tools.getInstance();
-        final Tools tools = new Tools(this);
-        this.tools = tools;
-
+        this.tools = new Tools(this);
         preferences = getSharedPreferences(Keys.SharedPrefsKey, MODE_MULTI_PROCESS);
         running = true;
 
@@ -106,6 +103,10 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
 
         ((TextView) findViewById(R.id.bottom_msg)).setText(getString(R.string.msg_troubleProxy, getString(R.string.activity_settings), getString(R.string.settings_btn_useProxy)));
         findViewById(R.id.bottom_bar).setVisibility(preferences.getBoolean(Keys.KEY_SETTINGS_USEPROXY, false) ? View.GONE : View.VISIBLE);
+
+        File onPostUpd = new File(Environment.getExternalStorageDirectory() + File.separator + "PurityU2D" + File.separator + "onPostUpdate");
+        if (!onPostUpd.exists() || !onPostUpd.isDirectory())
+            onPostUpd.mkdirs();
 
     }
 
@@ -362,7 +363,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                         }
                     });
                 } else {
-                    System.setProperty("http.proxySet", "true");
+                    System.setProperty("http.proxySet", "false");
                 }
                 connection = (HttpURLConnection) new URL(preferences.getString(Keys.KEY_SETTINGS_SOURCE, Keys.DEFAULT_SOURCE)).openConnection();
                 s = new Scanner(connection.getInputStream());

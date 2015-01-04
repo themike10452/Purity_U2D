@@ -17,6 +17,7 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,8 +25,10 @@ import com.themike10452.purityu2d.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -580,7 +583,26 @@ public class Tools {
 
     public void createOpenRecoveryScript(String line, final boolean rebootAfter, final boolean append) {
         if (interactiveShell != null && interactiveShell.isRunning()) {
-            interactiveShell.addCommand("echo " + line + (append ? " >> " : ">") + "/cache/recovery/openrecoveryscript", 23, new Shell.OnCommandResultListener() {
+            String command = "";
+            File lastScript = new File(C.getFilesDir() + File.separator + "script");
+            PrintWriter writer;
+            try {
+                writer = new PrintWriter(new FileWriter(lastScript, false));
+                File onPostUpd = new File(Environment.getExternalStorageDirectory() + File.separator + "PurityU2D" + File.separator + "onPostUpdate");
+                if (onPostUpd.exists() && onPostUpd.isDirectory()) {
+                    for (File f : onPostUpd.listFiles()) {
+                        if (f.getName().endsWith(".zip")) {
+                            writer.println(String.format("install %s", f.getAbsolutePath()));
+                        }
+                    }
+                }
+                writer.println(line);
+                writer.close();
+                command = "cat " + lastScript.getAbsolutePath() + (append ? " >> " : ">") + "/cache/recovery/openrecoveryscript";
+            } catch (IOException e) {
+                command = "echo " + line + (append ? " >> " : ">") + "/cache/recovery/openrecoveryscript";
+            }
+            interactiveShell.addCommand(command, 23, new Shell.OnCommandResultListener() {
                 @Override
                 public void onCommandResult(int commandCode, int exitCode, List<String> output) {
                     if (exitCode != 0)

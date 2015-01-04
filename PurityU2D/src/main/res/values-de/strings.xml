@@ -90,5 +90,6 @@
     <string name="prompt_blankDefault">Leer lassen für Standard</string>
     <string name="prompt_zipExtension">Vergiss nicht die Dateiendung .zip</string>
     <string name="receive_latest_version">Receive the latest version</string>
+    <string name="toast_restartApp">Restart the application</string>
 
 </resources>
