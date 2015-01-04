@@ -182,6 +182,16 @@ public class BackgroundAutoCheckService extends Service {
         DEVICE_PART = "";
         try {
             try {
+                if (preferences.getBoolean(Keys.KEY_SETTINGS_USEPROXY, false)) {
+                    final String proxyHost = preferences.getString(Keys.KEY_SETTINGS_PROXYHOST, Keys.DEFAULT_PROXY);
+                    System.setProperty("http.proxySet", "true");
+                    System.setProperty("http.proxyHost", proxyHost.substring(0, proxyHost.indexOf(":")));
+                    System.setProperty("http.proxyPort", proxyHost.substring(proxyHost.indexOf(":") + 1));
+                    System.setProperty("https.proxyHost", proxyHost.substring(0, proxyHost.indexOf(":")));
+                    System.setProperty("https.proxyPort", proxyHost.substring(proxyHost.indexOf(":") + 1));
+                } else {
+                    System.setProperty("http.proxySet", "false");
+                }
                 connection = (HttpURLConnection) new URL(preferences.getString(Keys.KEY_SETTINGS_SOURCE, Keys.DEFAULT_SOURCE)).openConnection();
                 s = new Scanner(connection.getInputStream());
             } catch (Exception e) {

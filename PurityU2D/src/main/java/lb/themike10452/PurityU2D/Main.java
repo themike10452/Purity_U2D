@@ -104,12 +104,8 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
             }
         }, 10);
 
-        /*final ProgressBar progressBar = new ProgressBar(Main.this);
-        progressBar.setAnimation(getIntroSet(1000, 400));
-        main.addView(progressBar);
-        progressBar.animate();*/
-
-        //chuckNorris();
+        ((TextView) findViewById(R.id.bottom_msg)).setText(getString(R.string.msg_troubleProxy, getString(R.string.activity_settings), getString(R.string.settings_btn_useProxy)));
+        findViewById(R.id.bottom_bar).setVisibility(preferences.getBoolean(Keys.KEY_SETTINGS_USEPROXY, false) ? View.GONE : View.VISIBLE);
 
     }
 
@@ -352,6 +348,22 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
         boolean DEVICE_SUPPORTED = false;
         try {
             try {
+                if (preferences.getBoolean(Keys.KEY_SETTINGS_USEPROXY, false)) {
+                    final String proxyHost = preferences.getString(Keys.KEY_SETTINGS_PROXYHOST, Keys.DEFAULT_PROXY);
+                    System.setProperty("http.proxySet", "true");
+                    System.setProperty("http.proxyHost", proxyHost.substring(0, proxyHost.indexOf(":")));
+                    System.setProperty("http.proxyPort", proxyHost.substring(proxyHost.indexOf(":") + 1));
+                    System.setProperty("https.proxyHost", proxyHost.substring(0, proxyHost.indexOf(":")));
+                    System.setProperty("https.proxyPort", proxyHost.substring(proxyHost.indexOf(":") + 1));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Proxy: " + proxyHost, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    System.setProperty("http.proxySet", "true");
+                }
                 connection = (HttpURLConnection) new URL(preferences.getString(Keys.KEY_SETTINGS_SOURCE, Keys.DEFAULT_SOURCE)).openConnection();
                 s = new Scanner(connection.getInputStream());
             } catch (final Exception e) {
@@ -586,6 +598,9 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
 
         if (preferences.getString(Keys.KEY_SETTINGS_DOWNLOADLOCATION, null) == null)
             editor.putString(Keys.KEY_SETTINGS_DOWNLOADLOCATION, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator);
+
+        if (!preferences.getBoolean(Keys.KEY_SETTINGS_USEPROXY, false))
+            editor.putBoolean(Keys.KEY_SETTINGS_USEPROXY, false);
 
         if (preferences.getBoolean(Keys.KEY_SETTINGS_USEANDM, true))
             editor.putBoolean(Keys.KEY_SETTINGS_USEANDM, true);

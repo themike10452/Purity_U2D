@@ -17,6 +17,7 @@
     <string name="defaultt">Default</string>
     <string name="undefined">Indefinito</string>
     <string name="onReboot">Riavvio in corso …</string>
+    <string name="proxy_list">Proxy List</string>
 
     <string name="dialog_title_downloading">Download in corso …</string>
     <string name="dialog_title_changelog">Changelog</string>
@@ -45,6 +46,8 @@
     <string name="msg_twrp">L\'istallazione automatica funziona solo con la TWRP recovery. La CWM non è supportata.</string>
     <string name="msg_activeDownloads">Non si può lasciare, hai i download attivi</string>
     <string name="msg_invalidFilename">Il nome del file non è valido</string>
+    <string name="msg_invalidProxy">Invalid proxy configuration</string>
+    <string name="msg_troubleProxy">Having trouble connecting? %1$s > %2$s</string>
     <string name="msg_updateRequired">Please update to te latest app version from Play Store</string>
     <string name="msgTitle_versionObs">Version obsolete</string>
 
@@ -58,6 +61,7 @@
     <string name="btn_downloadAgain">Scarica di nuovo</string>
 
     <string name="settings_category_backgroundCheck">ATTIVA IN BACKGROUND</string>
+    <string name="settings_category_proxy">PROXY</string>
     <string name="settings_category_downloads">DOWNLOADS</string>
     <string name="settings_category_romBase">ROM BASE</string>
 
@@ -65,6 +69,7 @@
     <string name="settings_textView_backgroundCheckInterval">Attiva in Background ad Intervalli</string>
 
     <string name="settings_checkbox_useAndroidDM">Usa l\'applcazione Download</string>
+    <string name="settings_btn_useProxy">Use proxy</string>
     <string name="settings_btn_downloadLocation">Percorso Download</string>
     <string name="settings_btn_staticFilename">Nome del file statico</string>
     <string name="settings_btn_receiveBeta">Ricevi il ROM in test</string>

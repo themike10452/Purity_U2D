@@ -18,6 +18,7 @@
     <string name="defaultt">Standard</string>
     <string name="undefined">Undefiniert</string>
     <string name="onReboot">Neustart …</string>
+    <string name="proxy_list">Proxy List</string>
 
     <string name="dialog_title_downloading">Lade herunter …</string>
     <string name="dialog_title_changelog">Changelog</string>
@@ -46,6 +47,8 @@
     <string name="msg_twrp">Die automatische Installation funktioniert nur mit TWRP Recovery. CWM wird nicht unterstützt.</string>
     <string name="msg_activeDownloads">Es läuft ein aktiver Download, Du kannst die App nicht beenden.</string>
     <string name="msg_invalidFilename">Ungültiger Dateiname</string>
+    <string name="msg_invalidProxy">Invalid proxy configuration</string>
+    <string name="msg_troubleProxy">Having trouble connecting? %1$s > %2$s</string>
     <string name="msg_updateRequired">Please update to te latest app version from Play Store</string>
     <string name="msgTitle_versionObs">Version obsolete</string>
 
@@ -66,6 +69,7 @@
     <string name="settings_textView_backgroundCheckInterval">Prüfungsintervall</string>
 
     <string name="settings_checkbox_useAndroidDM">Nutze den Android Download Manager</string>
+    <string name="settings_btn_useProxy">Use proxy</string>
     <string name="settings_btn_downloadLocation">Speicherort</string>
     <string name="settings_btn_staticFilename">Statischer Dateiname</string>
     <string name="settings_btn_receiveBeta">Receive test builds</string>
@@ -73,6 +77,7 @@
     <string name="settings_btn_romBase">Preferred ROM base</string>
 
     <string name="settings_info_useAndroidDM">Nutze den systemeigenen Download Manager zum Herunterladen</string>
+    <string name="settings_category_proxy">PROXY</string>
     <string name="settings_info_useStaticFilename">Nutze denselben Dateinamen für alle Downloads</string>
     <string name="settings_info_onPostInstall">Zip files placed under /sdcard/PurityU2D/onPostUpdate/ will be flashed automatically after installing ROM updates.</string>
 
