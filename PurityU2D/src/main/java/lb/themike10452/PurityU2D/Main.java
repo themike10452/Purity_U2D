@@ -737,30 +737,32 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
 
         d.dismiss();
 
-        if (bases.length == 1) {
-            preferences.edit().putString(Keys.KEY_SETTINGS_ROMBASE, bases[0]).apply();
-            return;
+        if (bases != null) {
+            if (bases.length == 1) {
+                preferences.edit().putString(Keys.KEY_SETTINGS_ROMBASE, bases[0]).apply();
+                return;
+            }
+
+            final String[] choices = bases;
+
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.prompt_romBase))
+                    .setCancelable(false)
+                    .setSingleChoiceItems(bases, Tools.findIndex(bases, preferences.getString(Keys.KEY_SETTINGS_ROMBASE, "null")), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            preferences.edit().putString(Keys.KEY_SETTINGS_ROMBASE, choices[i]).apply();
+                        }
+                    })
+                    .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            startService(new Intent(Main.this, BackgroundAutoCheckService.class));
+                            onCreate(null);
+                        }
+                    })
+                    .show();
         }
-
-        final String[] choices = bases;
-
-        new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.prompt_romBase))
-                .setCancelable(false)
-                .setSingleChoiceItems(bases, Tools.findIndex(bases, preferences.getString(Keys.KEY_SETTINGS_ROMBASE, "null")), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        preferences.edit().putString(Keys.KEY_SETTINGS_ROMBASE, choices[i]).apply();
-                    }
-                })
-                .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        startService(new Intent(Main.this, BackgroundAutoCheckService.class));
-                        onCreate(null);
-                    }
-                })
-                .show();
         /*text1.setTextAppearance(this, android.R.style.TextAppearance_Small);
         text1.setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"));
         text2.setTextAppearance(this, android.R.style.TextAppearance_Small);
