@@ -686,7 +686,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                         public void onClick(DialogInterface dialogInterface, int i) {
                             if (chooseRomBase)
                                 showRomBaseChooserDialog();
-                            else onCreate(null);
+                            else chuckNorris();
                         }
                     })
                     .setTitle(R.string.prompt_android_version)
@@ -758,7 +758,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             startService(new Intent(Main.this, BackgroundAutoCheckService.class));
-                            onCreate(null);
+                            chuckNorris();
                         }
                     })
                     .show();

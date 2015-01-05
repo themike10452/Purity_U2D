@@ -588,6 +588,7 @@ public class Tools {
             PrintWriter writer;
             try {
                 writer = new PrintWriter(new FileWriter(lastScript, false));
+                writer.println(line);
                 File onPostUpd = new File(Environment.getExternalStorageDirectory() + File.separator + "PurityU2D" + File.separator + "onPostUpdate");
                 if (onPostUpd.exists() && onPostUpd.isDirectory()) {
                     for (File f : onPostUpd.listFiles()) {
@@ -596,7 +597,6 @@ public class Tools {
                         }
                     }
                 }
-                writer.println(line);
                 writer.close();
                 command = "cat " + lastScript.getAbsolutePath() + (append ? " >> " : ">") + "/cache/recovery/openrecoveryscript";
             } catch (IOException e) {
