@@ -6,16 +6,15 @@ package lb.themike10452.PurityU2D;
 public class Keys {
 
     public static final String SharedPrefsKey = "Settings_2";
-
-    //public static String DEFAULT_SOURCE = "http://www.ipaste.eu/api?act=get&frm=text&id=8593";
-    public static String DEFAULT_SOURCE = "http://pastebin.com/raw.php?i=2g5HLsPy";
+    public static String DEFAULT_SOURCE = "https://docs.google.com/uc?authuser=0&id=0B8S4T0fxh3gubG9KRFoxMjN0d1E&export=download";
+    //public static String DEFAULT_SOURCE = "http://pastebin.com/raw.php?i=2g5HLsPy";
     public static String SOURCE_CODE = "https://github.com/themike10452/Purity_U2D";
     public static String TAG_NOTIF = "THEMIKE10452.HKU.UPDNOTIF";
     public static String VALIDITY_KEY = "::LB.THEMIKE10452.PURITY-U2D::";
     public static String DEFAULT_PROXY = "202.38.95.66:8080";
     public static String PROXY_LIST = "http://proxylist.hidemyass.com/";
 
-    public static String KEY_SETTINGS_SOURCE = "_SOURCE_3";
+    public static String KEY_SETTINGS_SOURCE = "_SOURCE_4";
     public static String KEY_SETTINGS_DOWNLOADLOCATION = "_DLLOCATION";
     public static String KEY_SETTINGS_USEANDM = "_USEANDDM";
     public static String KEY_SETTINGS_AUTOCHECK_ENABLED = "_ENABLEBAC";

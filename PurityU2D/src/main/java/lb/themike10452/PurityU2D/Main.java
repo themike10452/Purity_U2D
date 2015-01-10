@@ -239,31 +239,14 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                 ((Button) v.findViewById(R.id.btn_changelog)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf"), Typeface.BOLD);
                 ((Button) v.findViewById(R.id.btn_getLatestVersion)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf"), Typeface.BOLD);
 
-                v.findViewById(R.id.btn_changelog).setOnClickListener(new View.OnClickListener() {
+                final View.OnClickListener chlg = new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        TextView textView = new TextView(Main.this);
-                        textView.setText(CHANGELOG);
-                        textView.setTextAppearance(getApplicationContext(), android.R.style.TextAppearance_Small);
-                        textView.setTextColor(getResources().getColor(R.color.card_text));
-                        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
-                        View view1 = LayoutInflater.from(Main.this).inflate(R.layout.blank_view, null);
-                        view1.setPadding(15, 15, 15, 15);
-                        ((LinearLayout) view1).addView(textView, params);
-                        new AlertDialog.Builder(Main.this)
-                                .setView(view1)
-                                .setTitle(R.string.dialog_title_changelog)
-                                .setCancelable(false)
-                                .setNeutralButton(R.string.btn_dismiss, null)
-                                .show();
-
-                        textView.setHorizontallyScrolling(true);
-                        textView.setHorizontalScrollBarEnabled(true);
-                        textView.setMovementMethod(new ScrollingMovementMethod());
-
+                        showChangelog();
                     }
-                });
+                };
+
+                v.findViewById(R.id.btn_changelog).setOnClickListener(chlg);
 
                 v.findViewById(R.id.btn_getLatestVersion).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -303,6 +286,35 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                 return true;
         }
         return false;
+    }
+
+    private void showChangelog() {
+        TextView textView = new TextView(Main.this);
+        textView.setText(CHANGELOG);
+        textView.setTextAppearance(getApplicationContext(), android.R.style.TextAppearance_Small);
+        textView.setTextColor(getResources().getColor(R.color.card_text));
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+        View view1 = LayoutInflater.from(Main.this).inflate(R.layout.blank_view, null);
+        view1.setPadding(15, 15, 15, 15);
+        ((LinearLayout) view1).addView(textView, params);
+        new AlertDialog.Builder(Main.this)
+                .setView(view1)
+                .setTitle(R.string.dialog_title_changelog)
+                .setCancelable(false)
+                .setNeutralButton(R.string.btn_dismiss, null)
+                .setPositiveButton(preferences.getBoolean("wrap_changelog", false) ? R.string.unwrap : R.string.wrap, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        preferences.edit().putBoolean("wrap_changelog", !preferences.getBoolean("wrap_changelog", false)).apply();
+                        showChangelog();
+                    }
+                })
+                .show();
+
+        textView.setHorizontallyScrolling(!preferences.getBoolean("wrap_changelog", false));
+        textView.setHorizontalScrollBarEnabled(textView.isHorizontalScrollBarEnabled());
+        textView.setMovementMethod(new ScrollingMovementMethod());
     }
 
     private AnimationSet getIntroSet(int duration, int startOffset) {
@@ -524,7 +536,6 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                     try {
                         unregisterReceiver(this);
                         unregisterReceiver(downloadHandler);
-                    } catch (RuntimeException ignored) {
                     } catch (Exception ignored) {
                     }
                 }
@@ -587,8 +598,8 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
 
         SharedPreferences.Editor editor = preferences.edit();
 
-        if (preferences.getString(Keys.KEY_SETTINGS_SOURCE, null) == null) {
-            editor.putString(Keys.KEY_SETTINGS_SOURCE, Keys.DEFAULT_SOURCE);
+        if (preferences.getString(Keys.KEY_SETTINGS_DOWNLOADLOCATION, null) == null) {
+            editor.putString(Keys.KEY_SETTINGS_DOWNLOADLOCATION, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator);
             Dialog d = new AlertDialog.Builder(this)
                     .setMessage(R.string.msg_twrp)
                     .setNeutralButton(R.string.btn_ok, null)
@@ -597,25 +608,10 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
             ((TextView) d.findViewById(android.R.id.message)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"));
         }
 
-        if (preferences.getString(Keys.KEY_SETTINGS_DOWNLOADLOCATION, null) == null)
-            editor.putString(Keys.KEY_SETTINGS_DOWNLOADLOCATION, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator);
-
-        if (!preferences.getBoolean(Keys.KEY_SETTINGS_USEPROXY, false))
-            editor.putBoolean(Keys.KEY_SETTINGS_USEPROXY, false);
-
-        if (preferences.getBoolean(Keys.KEY_SETTINGS_USEANDM, true))
-            editor.putBoolean(Keys.KEY_SETTINGS_USEANDM, true);
-
-        if (preferences.getBoolean(Keys.KEY_SETTINGS_AUTOCHECK_ENABLED, true))
-            editor.putBoolean(Keys.KEY_SETTINGS_AUTOCHECK_ENABLED, true);
-
         if (preferences.getString(Keys.KEY_SETTINGS_AUTOCHECK_INTERVAL, null) == null)
             editor.putString(Keys.KEY_SETTINGS_AUTOCHECK_INTERVAL, "12:0");
-        else if (!tools.isAllDigits(preferences.getString(Keys.KEY_SETTINGS_AUTOCHECK_INTERVAL, null).replace(":", "")))
+        else if (!Tools.isAllDigits(preferences.getString(Keys.KEY_SETTINGS_AUTOCHECK_INTERVAL, null).replace(":", "")))
             editor.putString(Keys.KEY_SETTINGS_AUTOCHECK_INTERVAL, "12:0");
-
-        if (!preferences.getBoolean(Keys.KEY_SETTINGS_USESTATICFILENAME, false))
-            editor.putBoolean(Keys.KEY_SETTINGS_USESTATICFILENAME, false).apply();
 
         editor.apply();
 
@@ -686,7 +682,8 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                         public void onClick(DialogInterface dialogInterface, int i) {
                             if (chooseRomBase)
                                 showRomBaseChooserDialog();
-                            else chuckNorris();
+                            else
+                                chuckNorris();
                         }
                     })
                     .setTitle(R.string.prompt_android_version)
@@ -696,16 +693,6 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
     }
 
     private void showRomBaseChooserDialog() {
-        /*View child = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.blank_view, null);
-        LinearLayout layout = (LinearLayout) child;
-        TextView text1 = new TextView(this);
-        text1.setText(R.string.prompt_romBase);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(10, 10, 10, 10);
-        TextView text2 = new TextView(this);
-        text2.setText(R.string.msg_changeable);
-        layout.addView(text1, params);
-        layout.addView(text2, params);*/
 
         ProgressDialog d;
 
@@ -740,6 +727,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
         if (bases != null) {
             if (bases.length == 1) {
                 preferences.edit().putString(Keys.KEY_SETTINGS_ROMBASE, bases[0]).apply();
+                chuckNorris();
                 return;
             }
 
@@ -763,10 +751,6 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                     })
                     .show();
         }
-        /*text1.setTextAppearance(this, android.R.style.TextAppearance_Small);
-        text1.setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"));
-        text2.setTextAppearance(this, android.R.style.TextAppearance_Small);
-        text2.setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"));*/
     }
 
     @Override

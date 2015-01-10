@@ -13,6 +13,8 @@
     <string name="undefined">Undefined</string>
     <string name="onReboot">Rebooting …</string>
     <string name="proxy_list">Proxy List</string>
+    <string name="wrap">Wrap</string>
+    <string name="unwrap">Unwrap</string>
 
     <string name="dialog_title_downloading">Download in progress …</string>
     <string name="dialog_title_changelog">Changelog</string>
