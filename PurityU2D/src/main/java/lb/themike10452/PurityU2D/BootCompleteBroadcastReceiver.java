@@ -13,7 +13,7 @@ import lb.themike10452.PurityU2D.Services.BackgroundAutoCheckService;
 public class BootCompleteBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction() == Intent.ACTION_BOOT_COMPLETED) {
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             SharedPreferences preferences = context.getSharedPreferences("Settings", Context.MODE_MULTI_PROCESS);
             if (preferences.getBoolean(Keys.KEY_SETTINGS_AUTOCHECK_ENABLED, true))
                 context.startService(new Intent(context, BackgroundAutoCheckService.class));
