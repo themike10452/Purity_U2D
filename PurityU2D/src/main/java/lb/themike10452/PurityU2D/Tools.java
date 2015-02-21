@@ -97,10 +97,13 @@ public class Tools {
     public static String getMD5Hash(String filePath) {
         String res = null;
         try {
-            return new Scanner(Runtime.getRuntime().exec(String.format("md5 %s", filePath)).getInputStream()).next();
-        } catch (Exception e) {
-            return res;
+            Scanner s = new Scanner(Runtime.getRuntime().exec(String.format("md5 %s", filePath)).getInputStream());
+            res = s.next();
+            res = res.trim();
+            s.close();
+        } catch (Exception ignored) {
         }
+        return res;
     }
 
     public static String getBuildVersion() {
@@ -473,7 +476,7 @@ public class Tools {
                                     C.startActivity(new Intent(C.getApplicationContext(), Main.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
                                     Intent out = new Intent(EVENT_DOWNLOAD_COMPLETE);
                                     boolean match = true;
-                                    String md5 = MD5hash;
+                                    String md5 = "";
 
                                     if (MD5hash != null) {
                                         out.putExtra("match", match = MD5hash.equalsIgnoreCase(getMD5Hash(lastDownloadedFile.getAbsolutePath())));

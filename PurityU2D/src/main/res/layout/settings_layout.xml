@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/background">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:orientation="vertical"
         android:padding="?android:attr/listPreferredItemPaddingStart">
@@ -14,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@color/green_translucent"
+            android:background="@color/accentColor"
             android:padding="5dp">
 
             <TextView
@@ -42,7 +43,7 @@
             android:layout_height="1dp"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
-            android:background="@color/green_translucent" />
+            android:background="@color/settings_separator" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -92,7 +93,7 @@
                 android:id="@+id/editText_autocheck_h"
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/translucent_blue_circle"
+                android:background="@drawable/translucent_oval_button"
                 android:clickable="true"
                 android:gravity="center"
                 android:singleLine="true" />
@@ -109,7 +110,7 @@
                 android:id="@+id/editText_autocheck_m"
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/translucent_blue_circle"
+                android:background="@drawable/translucent_oval_button"
                 android:gravity="center"
                 android:singleLine="true" />
         </LinearLayout>
@@ -129,12 +130,11 @@
             android:layout_height="1dp"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
-            android:background="@color/green_translucent" />
+            android:background="@color/settings_separator" />
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="5dp">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:id="@+id/btn_editProxy"
@@ -144,7 +144,8 @@
                 android:layout_toStartOf="@+id/checkbox_useProxy"
                 android:background="@drawable/translucent_button"
                 android:clickable="true"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="5dp">
 
                 <TextView
                     android:id="@+id/title0"
@@ -185,12 +186,11 @@
             android:layout_height="1dp"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
-            android:background="@color/green_translucent" />
+            android:background="@color/settings_separator" />
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="5dp">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:id="@+id/textView1"
@@ -198,7 +198,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_toLeftOf="@+id/checkbox_useAndDM"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="5dp">
 
                 <TextView
                     android:id="@+id/title1"
@@ -229,15 +230,12 @@
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_marginBottom="3dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp"
             android:layout_marginTop="3dp"
-            android:background="@color/green_translucent" />
+            android:background="@color/settings_separator" />
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="5dp">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:id="@+id/btn_staticFilename"
@@ -246,7 +244,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_toLeftOf="@+id/checkbox_useStaticFilename"
                 android:background="@drawable/translucent_button"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="5dp">
 
                 <TextView
                     android:id="@+id/title2"
@@ -285,15 +284,14 @@
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_marginBottom="3dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp"
             android:layout_marginTop="3dp"
-            android:background="@color/green_translucent" />
+            android:background="@color/settings_separator" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp">
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp">
 
 
             <TextView
@@ -303,6 +301,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginBottom="5dp"
+                android:padding="5dp"
                 android:text="@string/settings_btn_receiveBeta" />
 
             <CheckBox
@@ -319,19 +318,17 @@
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_marginBottom="3dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp"
             android:layout_marginTop="3dp"
-            android:background="@color/green_translucent" />
+            android:background="@color/settings_separator" />
 
         <LinearLayout
             android:id="@+id/btn_dlLoc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:background="@drawable/translucent_button"
             android:clickable="true"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <TextView
                 style="?android:attr/preferenceLayoutChild"
@@ -351,19 +348,17 @@
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_marginBottom="3dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp"
             android:layout_marginTop="3dp"
-            android:background="@color/green_translucent" />
+            android:background="@color/settings_separator" />
 
         <LinearLayout
             android:id="@+id/btn_upSrc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:background="@drawable/translucent_button"
             android:clickable="true"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <TextView
                 style="?android:attr/preferenceLayoutChild"
@@ -394,16 +389,16 @@
             android:layout_height="1dp"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
-            android:background="@color/green_translucent" />
+            android:background="@color/settings_separator" />
 
         <LinearLayout
             android:id="@+id/btn_romBase"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:background="@drawable/translucent_button"
             android:clickable="true"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <TextView
                 style="?android:attr/preferenceLayoutChild"
@@ -424,19 +419,17 @@
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_marginBottom="3dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp"
             android:layout_marginTop="3dp"
-            android:background="@color/green_translucent" />
+            android:background="@color/settings_separator" />
 
         <LinearLayout
             android:id="@+id/btn_romApi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:background="@drawable/translucent_button"
             android:clickable="true"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <TextView
                 style="?android:attr/preferenceLayoutChild"

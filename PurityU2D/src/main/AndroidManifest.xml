@@ -41,7 +41,7 @@
             android:singleUser="true" />
 
         <receiver
-            android:name="lb.themike10452.PurityU2D.BootCompleteBroadcastReceiver"
+            android:name="lb.themike10452.PurityU2D.mBroadcastReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

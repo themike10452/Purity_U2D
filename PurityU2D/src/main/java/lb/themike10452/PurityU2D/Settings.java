@@ -99,9 +99,6 @@ public class Settings extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_layout);
         overridePendingTransition(R.anim.slide_in_rtl, R.anim.slide_out_rtl);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.green2));
-        }
 
         ((TextView) findViewById(R.id.topInfo)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf"));
 

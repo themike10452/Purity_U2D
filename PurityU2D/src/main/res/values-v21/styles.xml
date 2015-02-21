@@ -3,8 +3,10 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="android:colorAccent">@color/green_translucent</item>
-        <item name="android:colorPrimary">@color/green</item>
+        <item name="android:colorAccent">@color/accentColor</item>
+        <item name="android:colorPrimary">@color/primaryColor</item>
+        <item name="android:statusBarColor">@color/teal_2</item>
+        <item name="android:navigationBarColor">@color/teal_2</item>
     </style>
 
 </resources>

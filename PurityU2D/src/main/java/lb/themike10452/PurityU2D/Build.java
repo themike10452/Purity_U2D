@@ -45,16 +45,14 @@ public class Build {
         return MD5;
     }
 
-    private String PARAMS, BASE, API, VERSION, ZIPNAME, HTTPLINK, MD5;
+    private String BASE, API, VERSION, ZIPNAME, HTTPLINK, MD5;
     private boolean ISTESTBUILD;
 
     public Build(String parameters) {
-        PARAMS = new String(parameters);
-
-        if (PARAMS == null)
+        if (parameters == null)
             return;
 
-        Scanner s = new Scanner(PARAMS);
+        Scanner s = new Scanner(parameters);
 
         try {
             String line;

@@ -7,7 +7,7 @@
     </style>
 
     <style name="CustomActionBar" parent="android:Widget.Holo.Light.ActionBar">
-        <item name="android:background">@color/green</item>
+        <item name="android:background">@color/primaryColor</item>
         <item name="android:titleTextStyle">@style/CustomTitleText</item>
     </style>
 

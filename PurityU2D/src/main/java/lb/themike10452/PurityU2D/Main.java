@@ -18,6 +18,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
@@ -61,6 +63,166 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
     private LinearLayout main;
     private SwipeRefreshLayout refreshLayout;
 
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new AsyncTask<Void, Void, Boolean>() {
+                        Card card;
+                        boolean DEVICE_SUPPORTED;
+
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
+
+                            refreshLayout.setRefreshing(true);
+
+                            View v1 = LayoutInflater.from(Main.this).inflate(R.layout.rom_info_layout, null);
+                            ((TextView) v1.findViewById(R.id.text)).setText(Tools.getBuildVersion());
+
+                            tag = new TextView(Main.this);
+                            tag.setTextAppearance(Main.this, android.R.style.TextAppearance_Small);
+                            tag.setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"), Typeface.BOLD);
+                            tag.setTextSize(10f);
+
+                            Card card1 = new Card(Main.this, getString(R.string.card_title_installedROM), tag, false, v1);
+                            card1.getPARENT().setAnimation(getIntroSet(1000, 0));
+
+                            main.addView(card1.getPARENT());
+                            card1.getPARENT().animate();
+                        }
+
+                        @Override
+                        protected Boolean doInBackground(Void... voids) {
+                            try {
+                                DEVICE_SUPPORTED = true;
+                                boolean b = getDevicePart();
+                                Main.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        initSettings();
+                                    }
+                                });
+                                return b;
+                            } catch (DeviceNotSupportedException e) {
+                                DEVICE_SUPPORTED = false;
+                                return true;
+                            }
+                        }
+
+                        @Override
+                        protected void onPostExecute(Boolean success) {
+                            super.onPostExecute(success);
+
+                            tag.setText(preferences.getString(Keys.KEY_SETTINGS_ROMBASE, getString(R.string.undefined)).toUpperCase());
+
+                            refreshLayout.setRefreshing(false);
+
+                            if (!success) {
+                                displayOnScreenMessage(main, R.string.msg_failed_try_again);
+                                return;
+                            }
+
+                            if (!DEVICE_SUPPORTED) {
+                                displayOnScreenMessage(main, R.string.msg_device_not_supported);
+                                return;
+                            }
+
+                            try {
+                                if (Tools.getMinVer(DEVICE_PART) != null && Tools.getMinVer(DEVICE_PART) > Double.parseDouble(Tools.retainDigits(getPackageManager().getPackageInfo(getPackageName(), 0).versionName))) {
+                                    new AlertDialog.Builder(Main.this)
+                                            .setMessage(R.string.msg_updateRequired)
+                                            .setTitle(R.string.msgTitle_versionObs)
+                                            .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    try {
+                                                        Intent intent = getPackageManager().getLaunchIntentForPackage("com.android.vending");
+                                                        ComponentName comp = new ComponentName("com.android.vending", "com.google.android.finsky.activities.LaunchUrlHandlerActivity"); // package name and activity
+                                                        intent.setComponent(comp);
+                                                        intent.setData(Uri.parse("market://details?id=" + getPackageName()));
+                                                        startActivity(intent);
+                                                    } catch (Exception ignored) {
+
+                                                    }
+                                                }
+                                            })
+                                            .setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            Main.this.finish();
+                                                        }
+                                                    }
+                                            )
+                                            .show();
+                                    return;
+                                }
+                            } catch (Exception ignored) {
+
+                            }
+
+                            Tools.sniffBuilds(DEVICE_PART);
+
+                            if (BuildManager.getInstance().getProperBuild(getApplicationContext()) == null) {
+                                if (!BuildManager.baseMatchedOnce) {
+                                    displayOnScreenMessage(main, getString(R.string.msg_noROMForYou, preferences.getString(Keys.KEY_SETTINGS_ROMBASE, "").toUpperCase(), DEVICE.toUpperCase()));
+                                    return;
+                                } else if (!BuildManager.apiMatchedOnce) {
+                                    displayOnScreenMessage(main, getString(R.string.msg_noROMForYou, preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").toUpperCase(), DEVICE.toUpperCase()));
+                                    return;
+                                } else {
+                                    displayOnScreenMessage(main, getString(R.string.msg_noROMForYou, preferences.getString(Keys.KEY_SETTINGS_ROMBASE, "").toUpperCase() + " " + preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").toUpperCase(), DEVICE.toUpperCase()));
+                                    return;
+                                }
+                            }
+
+                            if (Tools.INSTALLED_ROM_VERSION.equalsIgnoreCase(BuildManager.getInstance().getProperBuild(getApplicationContext()).getVERSION())) {
+                                if (preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").equalsIgnoreCase("*latest*"))
+                                    displayOnScreenMessage(main, R.string.msg_up_to_date);
+                                else
+                                    displayOnScreenMessage(main, getString(R.string.msg_up_to_date) + " (" + preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "n/a") + ")");
+                                return;
+                            }
+
+                            View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.new_rom_layout, null);
+                            String ver = BuildManager.getInstance().getProperBuild(getApplicationContext()).getVERSION();
+
+                            ((TextView) v.findViewById(R.id.text)).setText(ver);
+
+                            ((Button) v.findViewById(R.id.btn_changelog)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf"), Typeface.BOLD);
+                            ((Button) v.findViewById(R.id.btn_getLatestVersion)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf"), Typeface.BOLD);
+
+                            final View.OnClickListener chlg = new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    showChangelog();
+                                }
+                            };
+
+                            v.findViewById(R.id.btn_changelog).setOnClickListener(chlg);
+
+                            v.findViewById(R.id.btn_getLatestVersion).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(final View view) {
+                                    getIt();
+                                }
+                            });
+
+                            if (!preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").equalsIgnoreCase("*latest*"))
+                                card = new Card(getApplicationContext(), getString(R.string.card_title_latestVersion) + " (" + preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "") + ")", false, v);
+                            else
+                                card = new Card(getApplicationContext(), getString(R.string.card_title_latestVersion), false, v);
+                            main.addView(card.getPARENT());
+                            card.getPARENT().startAnimation(getIntroSet(1000, 200));
+
+                        }
+                    }.execute();
+                }
+            });
+        }
+    };
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -80,9 +242,6 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.green2));
-        }
 
         this.tools = new Tools(this);
         preferences = getSharedPreferences(Keys.SharedPrefsKey, MODE_PRIVATE);
@@ -111,159 +270,42 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
     }
 
     private void chuckNorris() {
-        new AsyncTask<Void, Void, Boolean>() {
-            Card card;
-            boolean DEVICE_SUPPORTED;
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-
-                refreshLayout.setRefreshing(true);
-                if (main.getChildCount() > 0) {
-                    main.removeAllViews();
-                }
-
-                View v1 = LayoutInflater.from(Main.this).inflate(R.layout.rom_info_layout, null);
-                ((TextView) v1.findViewById(R.id.text)).setText(Tools.getBuildVersion());
-
-                tag = new TextView(Main.this);
-                tag.setTextAppearance(Main.this, android.R.style.TextAppearance_Small);
-                tag.setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"), Typeface.BOLD);
-                tag.setTextSize(10f);
-
-                Card card1 = new Card(Main.this, getString(R.string.card_title_installedROM), tag, false, v1);
-                card1.getPARENT().setAnimation(getIntroSet(1000, 0));
-
-                main.addView(card1.getPARENT());
-                card1.getPARENT().animate();
-            }
-
-            @Override
-            protected Boolean doInBackground(Void... voids) {
-                try {
-                    DEVICE_SUPPORTED = true;
-                    boolean b = getDevicePart();
-                    Main.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            initSettings();
-                        }
-                    });
-                    return b;
-                } catch (DeviceNotSupportedException e) {
-                    DEVICE_SUPPORTED = false;
-                    return true;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(Boolean success) {
-                super.onPostExecute(success);
-
-                tag.setText(preferences.getString(Keys.KEY_SETTINGS_ROMBASE, getString(R.string.undefined)).toUpperCase());
-
-                refreshLayout.setRefreshing(false);
-
-                if (!success) {
-                    displayOnScreenMessage(main, R.string.msg_failed_try_again);
-                    return;
-                }
-
-                if (!DEVICE_SUPPORTED) {
-                    displayOnScreenMessage(main, R.string.msg_device_not_supported);
-                    return;
-                }
-
-                try {
-                    if (Tools.getMinVer(DEVICE_PART) != null && Tools.getMinVer(DEVICE_PART) > Double.parseDouble(Tools.retainDigits(getPackageManager().getPackageInfo(getPackageName(), 0).versionName))) {
-                        new AlertDialog.Builder(Main.this)
-                                .setMessage(R.string.msg_updateRequired)
-                                .setTitle(R.string.msgTitle_versionObs)
-                                .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        try {
-                                            Intent intent = getPackageManager().getLaunchIntentForPackage("com.android.vending");
-                                            ComponentName comp = new ComponentName("com.android.vending", "com.google.android.finsky.activities.LaunchUrlHandlerActivity"); // package name and activity
-                                            intent.setComponent(comp);
-                                            intent.setData(Uri.parse("market://details?id=" + getPackageName()));
-                                            startActivity(intent);
-                                        } catch (Exception ignored) {
-
-                                        }
-                                    }
-                                })
-                                .setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                Main.this.finish();
-                                            }
-                                        }
-                                )
-                                .show();
-                        return;
-                    }
-                } catch (Exception ignored) {
-
-                }
-
-                Tools.sniffBuilds(DEVICE_PART);
-
-                if (BuildManager.getInstance().getProperBuild(getApplicationContext()) == null) {
-                    if (!BuildManager.baseMatchedOnce) {
-                        displayOnScreenMessage(main, getString(R.string.msg_noROMForYou, preferences.getString(Keys.KEY_SETTINGS_ROMBASE, "").toUpperCase(), DEVICE.toUpperCase()));
-                        return;
-                    } else if (!BuildManager.apiMatchedOnce) {
-                        displayOnScreenMessage(main, getString(R.string.msg_noROMForYou, preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").toUpperCase(), DEVICE.toUpperCase()));
-                        return;
-                    } else {
-                        displayOnScreenMessage(main, getString(R.string.msg_noROMForYou, preferences.getString(Keys.KEY_SETTINGS_ROMBASE, "").toUpperCase() + " " + preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").toUpperCase(), DEVICE.toUpperCase()));
-                        return;
-                    }
-                }
-
-                if (Tools.INSTALLED_ROM_VERSION.equalsIgnoreCase(BuildManager.getInstance().getProperBuild(getApplicationContext()).getVERSION())) {
-                    if (preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").equalsIgnoreCase("*latest*"))
-                        displayOnScreenMessage(main, R.string.msg_up_to_date);
-                    else
-                        displayOnScreenMessage(main, getString(R.string.msg_up_to_date) + " (" + preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "n/a") + ")");
-                    return;
-                }
-
-                View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.new_rom_layout, null);
-                String ver = BuildManager.getInstance().getProperBuild(getApplicationContext()).getVERSION();
-
-                ((TextView) v.findViewById(R.id.text)).setText(ver);
-
-                ((Button) v.findViewById(R.id.btn_changelog)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf"), Typeface.BOLD);
-                ((Button) v.findViewById(R.id.btn_getLatestVersion)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf"), Typeface.BOLD);
-
-                final View.OnClickListener chlg = new View.OnClickListener() {
+        if (main.getChildCount() > 0) {
+            int count = main.getChildCount();
+            final View lastChild = main.getChildAt(count - 1);
+            for (int i = 0; i < count; i++) {
+                final View v = main.getChildAt(i);
+                AnimationSet set = getOutroSet(500, (count - 1 - i) * 200);
+                set.setAnimationListener(new Animation.AnimationListener() {
                     @Override
-                    public void onClick(View view) {
-                        showChangelog();
+                    public void onAnimationStart(Animation animation) {
+
                     }
-                };
 
-                v.findViewById(R.id.btn_changelog).setOnClickListener(chlg);
-
-                v.findViewById(R.id.btn_getLatestVersion).setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(final View view) {
-                        getIt();
+                    public void onAnimationEnd(Animation animation) {
+                        main.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                main.removeView(v);
+                                if (v == lastChild) {
+                                    mHandler.sendEmptyMessage(0);
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
                     }
                 });
-
-                if (!preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").equalsIgnoreCase("*latest*"))
-                    card = new Card(getApplicationContext(), getString(R.string.card_title_latestVersion) + " (" + preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "") + ")", false, v);
-                else
-                    card = new Card(getApplicationContext(), getString(R.string.card_title_latestVersion), false, v);
-                main.addView(card.getPARENT());
-                card.getPARENT().startAnimation(getIntroSet(1000, 200));
-
+                v.startAnimation(set);
             }
-        }.execute();
+
+        } else {
+            mHandler.sendEmptyMessage(0);
+        }
     }
 
     @Override
@@ -317,8 +359,8 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
         textView.setMovementMethod(new ScrollingMovementMethod());
     }
 
-    private AnimationSet getIntroSet(int duration, int startOffset) {
-        AlphaAnimation animation1 = new AlphaAnimation(0, 1);
+    private synchronized AnimationSet getIntroSet(int duration, int startOffset) {
+        //AlphaAnimation animation1 = new AlphaAnimation(0, 1);
 
         TranslateAnimation animation2 = new TranslateAnimation(
                 Animation.RELATIVE_TO_SELF, 0,
@@ -327,7 +369,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                 Animation.RELATIVE_TO_SELF, 0);
 
         final AnimationSet set = new AnimationSet(false);
-        set.addAnimation(animation1);
+        //set.addAnimation(animation1);
         set.addAnimation(animation2);
         set.setDuration(duration);
         set.setStartOffset(startOffset);
@@ -335,14 +377,14 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
         return set;
     }
 
-    private AnimationSet getOutroSet(int duration, int startOffset) {
+    private synchronized AnimationSet getOutroSet(int duration, int startOffset) {
         AlphaAnimation animation1 = new AlphaAnimation(1, 0);
 
         TranslateAnimation animation2 = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, 0,
-                Animation.RELATIVE_TO_SELF, 0,
-                Animation.RELATIVE_TO_SELF, 0,
-                Animation.RELATIVE_TO_SELF, 10);
+                Animation.RELATIVE_TO_PARENT, 0,
+                Animation.RELATIVE_TO_PARENT, 0,
+                Animation.RELATIVE_TO_PARENT, 0,
+                Animation.RELATIVE_TO_PARENT, 1);
 
         final AnimationSet set = new AnimationSet(false);
         set.addAnimation(animation1);
@@ -535,7 +577,8 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
 
             try {
                 unregisterReceiver(downloadHandler);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
             IntentFilter filter = new IntentFilter();
             filter.addAction(Tools.EVENT_DOWNLOAD_CANCELED);
