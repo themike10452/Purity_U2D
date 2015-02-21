@@ -16,7 +16,7 @@ public class CustomProgressDialog extends Dialog {
     public static String UNIT = " MB";
     private ProgressBar progressBar;
     private int MAX;
-    private TextView FILENAME, FILESIZE, DOWNLOADED, PERCENTAGE;
+    private TextView FILENAME, FILESIZE, DOWNLOADED, PERCENTAGE, SPEED;
 
     public CustomProgressDialog(Context context) {
         super(context, android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth);
@@ -28,6 +28,7 @@ public class CustomProgressDialog extends Dialog {
         FILESIZE = (TextView) findViewById(R.id.textView_filesize);
         DOWNLOADED = (TextView) findViewById(R.id.textView_downloaded);
         PERCENTAGE = (TextView) findViewById(R.id.percentage);
+        SPEED = (TextView) findViewById(R.id.speed);
 
         progressBar.setMax(MAX);
     }
@@ -36,6 +37,13 @@ public class CustomProgressDialog extends Dialog {
         FILENAME.setText(filename);
         FILESIZE.setText(filesize + UNIT);
         DOWNLOADED.setText(downloaded + UNIT);
+    }
+
+    public void update(double speed) {
+        if (speed >= 0) {
+            double kbSpeed = speed / 1000;
+            SPEED.setText(kbSpeed < 1000 ? String.format("%.0f Kb/s", kbSpeed) : String.format("%.2f Mb/s", kbSpeed / 1000));
+        }
     }
 
     public void setProgress(int percentage) {

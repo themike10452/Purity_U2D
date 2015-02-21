@@ -30,8 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
 
@@ -250,7 +250,7 @@ public class Tools {
                                         @Override
                                         public void run() {
                                             dialog.setIndeterminate(false);
-                                            String total_mb = String.format("%.2g%n", downloadSize / Math.pow(2, 20)).trim();
+                                            String total_mb = String.format("%d.2f", downloadSize / 1024 * 1024).trim();
                                             dialog.update(lastDownloadedFile.getName(), total_mb, total_mb);
                                             dialog.setProgress(100);
                                             C.sendBroadcast(new Intent(EVENT_DOWNLOADEDFILE_EXISTS));
@@ -264,20 +264,36 @@ public class Tools {
                         new File(destination).mkdirs();
                         stream = connection.getInputStream();
                         outputStream = new FileOutputStream(lastDownloadedFile);
+                        long time = Calendar.getInstance().getTimeInMillis();
+                        int byteCounter = 0;
                         while ((bufferLength = stream.read(buffer)) > 0) {
                             if (cancelDownload)
                                 return;
                             isDownloading = true;
                             outputStream.write(buffer, 0, bufferLength);
                             downloadedSize += bufferLength;
+                            byteCounter += bufferLength;
+                            long now;
+                            double interval = (now = Calendar.getInstance().getTimeInMillis()) - time;
+                            final double speed = interval == 0 ? -1 : (byteCounter / interval) * 1000;
+                            if (interval >= 1000) {
+                                time = now;
+                                byteCounter = 0;
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dialog.update(speed);
+                                    }
+                                });
+                            }
                             activity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     double done = downloadedSize, total = downloadSize;
                                     Double progress = (done / total) * 100;
                                     dialog.setIndeterminate(false);
-                                    String done_mb = String.format("%.2g%n", done / Math.pow(2, 20)).trim();
-                                    String total_mb = String.format("%.2g%n", total / Math.pow(2, 20)).trim();
+                                    String done_mb = String.format("%.2f", done / Math.pow(2, 20)).trim();
+                                    String total_mb = String.format("%.2f", total / Math.pow(2, 20)).trim();
                                     dialog.update(lastDownloadedFile.getName(), done_mb, total_mb);
                                     dialog.setProgress(progress.intValue());
                                 }
@@ -291,21 +307,13 @@ public class Tools {
                         }
                         C.sendBroadcast(out);
 
-                    } catch (final MalformedURLException e) {
+                    } catch (final IOException e) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 Toast.makeText(C.getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });
-                    } catch (final IOException ee) {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(C.getApplicationContext(), ee.toString(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        return;
                     } finally {
                         if (cancelDownload)
                             C.sendBroadcast(new Intent(EVENT_DOWNLOAD_CANCELED));
