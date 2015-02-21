@@ -85,7 +85,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
         }
 
         this.tools = new Tools(this);
-        preferences = getSharedPreferences(Keys.SharedPrefsKey, MODE_MULTI_PROCESS);
+        preferences = getSharedPreferences(Keys.SharedPrefsKey, MODE_PRIVATE);
         running = true;
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
