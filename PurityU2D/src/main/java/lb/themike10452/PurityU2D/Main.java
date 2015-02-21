@@ -460,19 +460,59 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
             String destination = preferences
                     .getString(Keys.KEY_SETTINGS_DOWNLOADLOCATION, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator);
 
-            final BroadcastReceiver downloadHandler = new BroadcastReceiver() {
+            BroadcastReceiver downloadHandler = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, final Intent intent) {
                     unregisterReceiver(this);
                     AlertDialog.Builder builder = new AlertDialog.Builder(Main.this);
                     Dialog d = null;
-                    if (intent.getAction().equals(Tools.EVENT_DOWNLOAD_COMPLETE)) {
-                        boolean md5Matched = intent.getBooleanExtra("match", true);
-                        if (md5Matched) {
+                    String action = intent.getAction();
+                    if (action != null)
+                        if (action.equals(Tools.EVENT_DOWNLOAD_COMPLETE)) {
+                            boolean md5Matched = intent.getBooleanExtra("match", true);
+                            if (md5Matched) {
+                                d = builder
+                                        .setTitle(R.string.dialog_title_readyToInstall)
+                                        .setCancelable(false)
+                                        .setMessage(getString(R.string.prompt_install1, getString(R.string.btn_install), getString(R.string.btn_dismiss)))
+                                        .setPositiveButton(R.string.btn_install, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                tools.createOpenRecoveryScript("install " + tools.lastDownloadedFile.getAbsolutePath(), true, false);
+                                            }
+                                        })
+                                        .setNegativeButton(R.string.btn_dismiss, null)
+                                        .show();
+                                Tools.userDialog = d;
+                            } else {
+                                d = builder.setTitle(R.string.dialog_title_md5mismatch)
+                                        .setCancelable(false)
+                                        .setMessage(getString(R.string.prompt_md5mismatch, BuildManager.getInstance().getProperBuild(getApplicationContext()).getMD5(), intent.getStringExtra("md5")))
+                                        .setPositiveButton(R.string.btn_downloadAgain, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                getIt();
+                                            }
+                                        })
+                                        .setNegativeButton(R.string.btn_installAnyway, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                tools.createOpenRecoveryScript("install " + tools.lastDownloadedFile.getAbsolutePath(), true, false);
+                                            }
+                                        })
+                                        .setNeutralButton(R.string.btn_dismiss, null)
+                                        .show();
+                                Tools.userDialog = d;
+                            }
+                        } else if (intent.getAction().equals(Tools.EVENT_DOWNLOADEDFILE_EXISTS)) {
+
+                            if (Tools.userDialog != null)
+                                Tools.userDialog.dismiss();
+
                             d = builder
                                     .setTitle(R.string.dialog_title_readyToInstall)
                                     .setCancelable(false)
-                                    .setMessage(getString(R.string.prompt_install1, getString(R.string.btn_install), getString(R.string.btn_dismiss)))
+                                    .setMessage(getString(R.string.prompt_install2, getString(R.string.btn_install), getString(R.string.btn_dismiss)))
                                     .setPositiveButton(R.string.btn_install, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -482,45 +522,9 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                                     .setNegativeButton(R.string.btn_dismiss, null)
                                     .show();
                             Tools.userDialog = d;
-                        } else {
-                            d = builder.setTitle(R.string.dialog_title_md5mismatch)
-                                    .setCancelable(false)
-                                    .setMessage(getString(R.string.prompt_md5mismatch, BuildManager.getInstance().getProperBuild(getApplicationContext()).getMD5(), intent.getStringExtra("md5")))
-                                    .setPositiveButton(R.string.btn_downloadAgain, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            getIt();
-                                        }
-                                    })
-                                    .setNegativeButton(R.string.btn_installAnyway, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            tools.createOpenRecoveryScript("install " + tools.lastDownloadedFile.getAbsolutePath(), true, false);
-                                        }
-                                    })
-                                    .setNeutralButton(R.string.btn_dismiss, null)
-                                    .show();
-                            Tools.userDialog = d;
+                        } else if (action.equals(Tools.EVENT_DOWNLOAD_CANCELED)) {
+                            Toast.makeText(getApplicationContext(), R.string.msg_downloadCanceled, Toast.LENGTH_SHORT).show();
                         }
-                    } else if (intent.getAction().equals(Tools.EVENT_DOWNLOADEDFILE_EXISTS)) {
-
-                        if (Tools.userDialog != null)
-                            Tools.userDialog.dismiss();
-
-                        d = builder
-                                .setTitle(R.string.dialog_title_readyToInstall)
-                                .setCancelable(false)
-                                .setMessage(getString(R.string.prompt_install2, getString(R.string.btn_install), getString(R.string.btn_dismiss)))
-                                .setPositiveButton(R.string.btn_install, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        tools.createOpenRecoveryScript("install " + tools.lastDownloadedFile.getAbsolutePath(), true, false);
-                                    }
-                                })
-                                .setNegativeButton(R.string.btn_dismiss, null)
-                                .show();
-                        Tools.userDialog = d;
-                    }
                     if (d != null && d.findViewById(android.R.id.message) != null) {
                         ((TextView) d.findViewById(android.R.id.message)).setTextAppearance(Main.this, android.R.style.TextAppearance_Small);
                         ((TextView) d.findViewById(android.R.id.message)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"));
@@ -529,21 +533,19 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                 }
             };
 
-            BroadcastReceiver downloadCancellationReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    Toast.makeText(getApplicationContext(), R.string.msg_downloadCanceled, Toast.LENGTH_SHORT).show();
-                    try {
-                        unregisterReceiver(this);
-                        unregisterReceiver(downloadHandler);
-                    } catch (Exception ignored) {
-                    }
-                }
-            };
+            try {
+                unregisterReceiver(downloadHandler);
+            } catch (Exception ignored) {}
 
-            registerReceiver(downloadCancellationReceiver, new IntentFilter(Tools.EVENT_DOWNLOAD_CANCELED));
-            registerReceiver(downloadHandler, new IntentFilter(Tools.EVENT_DOWNLOAD_COMPLETE));
-            registerReceiver(downloadHandler, new IntentFilter(Tools.EVENT_DOWNLOADEDFILE_EXISTS));
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(Tools.EVENT_DOWNLOAD_CANCELED);
+            filter.addAction(Tools.EVENT_DOWNLOAD_COMPLETE);
+            filter.addAction(Tools.EVENT_DOWNLOADEDFILE_EXISTS);
+
+            registerReceiver(downloadHandler, filter);
+            //registerReceiver(downloadCancellationReceiver, new IntentFilter(Tools.EVENT_DOWNLOAD_CANCELED));
+            //registerReceiver(downloadHandler, new IntentFilter(Tools.EVENT_DOWNLOAD_COMPLETE));
+            //registerReceiver(downloadHandler, new IntentFilter(Tools.EVENT_DOWNLOADEDFILE_EXISTS));
 
             tools.downloadFile(link, destination, BuildManager.getInstance().getProperBuild(getApplicationContext()).getZIPNAME(), BuildManager.getInstance().getProperBuild(getApplicationContext()).getMD5(), b);
         }
