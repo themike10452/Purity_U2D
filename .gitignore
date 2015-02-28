@@ -1,8 +1,9 @@
 .gradle
 .idea
 /local.properties
+/release.properties
 .DS_Store
 **/PurityU2D-PurityU2D.iml
 **/PurityU2D.iml
 **/build
-**/Thumbs.db
+**/*.db

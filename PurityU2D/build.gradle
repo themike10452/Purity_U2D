@@ -17,10 +17,12 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("C:\\Users\\Michael\\AndroidStudioProjects\\KeyStore\\PurityU2D.jks")
-            storePassword "vengeance"
-            keyAlias "PurityU2D"
-            keyPassword "vengeance"
+            def props = new Properties()
+            props.load(new FileInputStream(rootProject.file("release.properties")))
+            storeFile rootProject.file(props.storeFile)
+            storePassword props.storePassword
+            keyAlias props.keyAlias
+            keyPassword props.keyPassword
         }
     }
 
