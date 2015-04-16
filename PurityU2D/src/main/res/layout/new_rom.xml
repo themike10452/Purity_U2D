@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -23,9 +22,9 @@
 
     <Button
         android:id="@+id/btn_changelog"
-        style="?android:attr/borderlessButtonStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
         android:text="@string/btn_whatsNew"
         android:textColor="@color/card_text_soft" />
 
@@ -36,9 +35,9 @@
 
     <Button
         android:id="@+id/btn_getLatestVersion"
-        style="?android:attr/borderlessButtonStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
         android:text="@string/btn_getIt"
         android:textColor="@color/card_text_soft" />
 

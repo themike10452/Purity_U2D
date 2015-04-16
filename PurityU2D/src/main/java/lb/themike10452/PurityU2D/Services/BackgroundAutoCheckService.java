@@ -1,4 +1,4 @@
-package lb.themike10452.PurityU2D.Services;
+package lb.themike10452.purityu2d.services;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -7,9 +7,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 
-import lb.themike10452.PurityU2D.Keys;
-import lb.themike10452.PurityU2D.Tools;
-import lb.themike10452.PurityU2D.mBroadcastReceiver;
+import lb.themike10452.purityu2d.Keys;
+import lb.themike10452.purityu2d.Tools;
+import lb.themike10452.purityu2d.mBroadcastReceiver;
 
 /**
  * Created by Mike on 9/26/2014.

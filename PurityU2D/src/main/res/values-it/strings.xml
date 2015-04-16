@@ -3,7 +3,6 @@
 <!-- Translated by Massimiliano Montaleone and Dario Ferretti-->
 
 <resources>
-
     <string name="app_name">Purity U2D</string>
     <string name="version">Versione</string>
     <string name="action_refresh">Aggiorna</string>
@@ -58,8 +57,8 @@
     <string name="btn_ok">Ok</string>
     <string name="btn_cancel">Annulla</string>
     <string name="btn_dismiss">Annulla</string>
-    <string name="btn_install">Riavvia e installa</string>
-    <string name="btn_installAnyway">Installa comunque</string>
+    <string name="btn_install">Proceed</string>
+    <string name="btn_installAnyway">Proceed anyway</string>
     <string name="btn_downloadAgain">Scarica nuovamente</string>
 
     <string name="settings_category_backgroundCheck">ATTIVA IN BACKGROUND</string>
@@ -70,7 +69,7 @@
     <string name="settings_switch_backgroundCheck">Attiva in Background</string>
     <string name="settings_textView_backgroundCheckInterval">Attiva in Background ad intervalli</string>
 
-    <string name="settings_checkbox_useAndroidDM">Usa l\'applcazione Download</string>
+    <string name="settings_switch_useAndroidDM">Usa l\'applcazione Download</string>
     <string name="settings_btn_useProxy">Use proxy</string>
     <string name="settings_btn_downloadLocation">Percorso Download</string>
     <string name="settings_btn_staticFilename">Nome del file statico</string>
@@ -83,7 +82,7 @@
     <string name="settings_info_onPostInstall">I file zip localizzati in /sdcard/PurityU2D/onPostUpdate/ saranno installati automaticamente dopo aver completato l\'aggiornamento della Rom.</string>
 
     <string name="prompt_install1">La Rom è stata scaricata con successo.\nClicca %1$s per riavviare e installare ora.\nClicca %2$s per installare più tardi.</string>
-    <string name="prompt_install2">Esiste già un file con md5 corrispondente.\nClicca %1$s per riavviare e installare ora.\nClicca %2$s per installare più tardi.</string>
+    <string name="prompt_install2">Esiste già un file con md5 corrispondente.\nClicca %1$s per installare ora.\nClicca %2$s per installare più tardi.</string>
     <string name="prompt_md5mismatch">La Rom è stato scaricata con successo. Tuttavia MD5 non corrisponde al file originale.\n\nOriginal:%1$s\nCalculated:%2$s</string>
     <string name="prompt_rootFail">Accesso root negato\nVuoi continuare a scaricare gli aggiornamenti del ROM attraverso l\'app ma senza root non si puà installare.\nControlla l\'app con il superuser.</string>
     <string name="prompt_romBase">Quale versione della Rom vorresti ricevere?</string>
@@ -92,5 +91,13 @@
     <string name="prompt_zipExtension">Non dimenticate di aggiungere l\'estensione .zip al file</string>
     <string name="receive_latest_version">Receive the latest version</string>
     <string name="toast_restartApp">Restart the application</string>
-
+    <string name="switch_bnrKernel">Backup and restore current kernel</string>
+    <string name="switch_wipeCache">Wipe cache partition</string>
+    <string name="switch_wipeDalvik">Wipe dalvik cache</string>
+    <string name="switch_factoryReset">Factory reset (Clean flash)</string>
+    <string name="switch_factoryReset_summary">Wipes data, cache and dalvik cache.</string>
+    <string name="title_installQueue">Install queue</string>
+    <string name="empty">Empty</string>
+    <string name="hint_swipeToInstall">Swipe to install</string>
+    <string name="flash_a_zip">Flash a ZIP</string>
 </resources>

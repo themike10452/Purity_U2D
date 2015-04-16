@@ -1,4 +1,4 @@
-package lb.themike10452.PurityU2D;
+package lb.themike10452.purityu2d;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -21,7 +21,7 @@ public class CustomProgressDialog extends Dialog {
     public CustomProgressDialog(Context context) {
         super(context, android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.progress_dialog_layout);
+        setContentView(R.layout.progress_dialog);
         MAX = 100;
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         FILENAME = (TextView) findViewById(R.id.textView_filename);

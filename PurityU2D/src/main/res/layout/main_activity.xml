@@ -29,21 +29,22 @@
             </LinearLayout>
         </ScrollView>
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/bottom_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:gravity="center"
+            android:orientation="vertical"
             android:padding="5dp">
 
             <TextView
                 android:id="@+id/bottom_msg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="@string/msg_troubleProxy"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/card_text" />
-        </LinearLayout>
+        </FrameLayout>
     </RelativeLayout>
 </android.support.v4.widget.SwipeRefreshLayout>

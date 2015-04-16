@@ -1,4 +1,4 @@
-package lb.themike10452.PurityU2D;
+package lb.themike10452.purityu2d;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -14,7 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
 
-import lb.themike10452.PurityU2D.Services.BackgroundAutoCheckService;
+import lb.themike10452.purityu2d.services.BackgroundAutoCheckService;
 
 /**
  * Created by Mike on 9/26/2014.
@@ -30,9 +30,10 @@ public class mBroadcastReceiver extends BroadcastReceiver {
         context = c;
         preferences = context.getSharedPreferences(Keys.SharedPrefsKey, Context.MODE_PRIVATE);
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-            if (preferences.getBoolean(Keys.KEY_SETTINGS_AUTOCHECK_ENABLED, true))
+            if (preferences.getBoolean(Keys.KEY_SETTINGS_AUTOCHECK_ENABLED, true)) {
                 context.startService(new Intent(context, BackgroundAutoCheckService.class));
-        } else if (BackgroundAutoCheckService.ACTION.equals(intent.getAction())) {
+            }
+        } else if (BackgroundAutoCheckService.ACTION.equals(intent.getAction()) && !MainActivity.isVisible && !Tools.isDownloading) {
             new Thread(run).start();
         }
     }
@@ -73,19 +74,26 @@ public class mBroadcastReceiver extends BroadcastReceiver {
                 }
 
                 //display a notification to the user in case of an available update
-                if (!installed.equalsIgnoreCase(latest)) {
-                    Intent intent1 = new Intent(context, Main.class);
-                    PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
-                    Notification notif = new Notification.Builder(context.getApplicationContext())
-                            .setContentIntent(pendingIntent)
-                            .setSmallIcon(R.drawable.ic_notification)
-                            .setContentTitle(context.getString(R.string.app_name))
-                            .setContentText(context.getString(R.string.msg_updateFound)).build();
-                    notif.flags = Notification.FLAG_AUTO_CANCEL;
-                    NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                    manager.notify(Keys.TAG_NOTIF, 3721, notif);
+                try {
+                    int cv = Integer.parseInt(installed);
+                    int lv = Integer.parseInt(latest);
+                    if (cv >= lv)
+                        return;
+                } catch (Exception e){
+                    if (installed.equalsIgnoreCase(latest))
+                        return;
                 }
 
+                Intent intent1 = new Intent(context, MainActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+                Notification notif = new Notification.Builder(context.getApplicationContext())
+                        .setContentIntent(pendingIntent)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setContentTitle(context.getString(R.string.app_name))
+                        .setContentText(context.getString(R.string.msg_updateFound)).build();
+                notif.flags = Notification.FLAG_AUTO_CANCEL;
+                NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                manager.notify(Keys.TAG_NOTIF, 3721, notif);
             }
         }
     };

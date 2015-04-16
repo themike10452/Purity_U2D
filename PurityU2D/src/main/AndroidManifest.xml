@@ -16,32 +16,35 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name="lb.themike10452.PurityU2D.Main"
+            android:name="lb.themike10452.purityu2d.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="lb.themike10452.PurityU2D.Settings"
+            android:name="lb.themike10452.purityu2d.SettingsActivity"
             android:label="@string/activity_settings"
-            android:parentActivityName="lb.themike10452.PurityU2D.Main"
+            android:parentActivityName="lb.themike10452.purityu2d.MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="lb.themike10452.PurityU2D.FileSelector.FileBrowser"
+            android:name="lb.themike10452.purityu2d.filebrowser.FileBrowser"
             android:label="@string/activity_fileBrowser"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="lb.themike10452.purityu2d.InstallationActivity"
+            android:label="@string/dialog_title_readyToInstall"
             android:screenOrientation="portrait" />
 
         <service
-            android:name="lb.themike10452.PurityU2D.Services.BackgroundAutoCheckService"
+            android:name="lb.themike10452.purityu2d.services.BackgroundAutoCheckService"
             android:enabled="true"
             android:singleUser="true" />
 
         <receiver
-            android:name="lb.themike10452.PurityU2D.mBroadcastReceiver"
+            android:name="lb.themike10452.purityu2d.mBroadcastReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

@@ -1,4 +1,4 @@
-package lb.themike10452.PurityU2D;
+package lb.themike10452.purityu2d;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,7 +18,7 @@ public class BuildManager {
     private static Set<Build> buildSet;
 
     public BuildManager() {
-        buildSet = new HashSet<Build>(5, 0.8f);
+        buildSet = new HashSet<>(5, 0.8f);
         buildSet.clear();
         baseMatchedOnce = false;
         instance = this;
@@ -42,27 +42,31 @@ public class BuildManager {
         return buildSet.add(k);
     }
 
-    public Build getProperBuild(Context c) {
+    public Build getProperBuild(Context context) {
         apiMatchedOnce = false;
 
         if (buildSet.isEmpty()) {
             return null;
         }
 
-        SharedPreferences preferences = c.getSharedPreferences(Keys.SharedPrefsKey, Context.MODE_PRIVATE);
+        SharedPreferences preferences = context.getSharedPreferences(Keys.SharedPrefsKey, Context.MODE_PRIVATE);
 
         Build res = null;
 
+        String romBase = preferences.getString(Keys.KEY_SETTINGS_ROMBASE, "").trim();
+        String romApi = preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").trim();
+        boolean getBeta = preferences.getBoolean(Keys.KEY_SETTINGS_LOOKFORBETA, true);
+
         for (Build k : buildSet) {
             try {
-                boolean a = k.getBASE().contains(preferences.getString(Keys.KEY_SETTINGS_ROMBASE, "").trim().toUpperCase());
-                boolean b = k.getAPI().contains(preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").trim().toUpperCase());
+                boolean a = k.getBASE().contains(romBase.toUpperCase());
+                boolean b = k.getAPI().contains(romApi.toUpperCase());
                 if (a)
                     baseMatchedOnce = true;
                 if (b)
                     apiMatchedOnce = true;
                 if (a & b) {
-                    if (k.isTestBuild() && !preferences.getBoolean(Keys.KEY_SETTINGS_LOOKFORBETA, true)) {
+                    if (k.isTestBuild() && !getBeta) {
                         res = null;
                     } else {
                         res = k;

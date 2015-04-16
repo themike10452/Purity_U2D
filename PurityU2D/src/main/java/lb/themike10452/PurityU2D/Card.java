@@ -1,4 +1,4 @@
-package lb.themike10452.PurityU2D;
+package lb.themike10452.purityu2d;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -24,7 +24,7 @@ public class Card {
 
     public Card(Context c, String title, View addition, boolean placeSeparators, View... views) {
         TITLE = title;
-        PARENT = ((LayoutInflater) (CONTEXT = c).getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.card_layout, null);
+        PARENT = ((LayoutInflater) (CONTEXT = c).getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.card, null);
         ((TextView) PARENT.findViewById(R.id.card_title)).setText(TITLE);
         LinearLayout container = (LinearLayout) PARENT.findViewById(R.id.card_content);
         for (View view : views) {

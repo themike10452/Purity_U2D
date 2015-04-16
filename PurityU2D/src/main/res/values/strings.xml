@@ -53,8 +53,8 @@
     <string name="btn_ok">Okay</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_dismiss">Dismiss</string>
-    <string name="btn_install">Reboot and install</string>
-    <string name="btn_installAnyway">Install anyway</string>
+    <string name="btn_install">Proceed</string>
+    <string name="btn_installAnyway">Proceed anyway</string>
     <string name="btn_downloadAgain">Download again</string>
 
     <string name="settings_category_backgroundCheck">BACKGROUND CHECK</string>
@@ -65,7 +65,7 @@
     <string name="settings_switch_backgroundCheck">Background Check</string>
     <string name="settings_textView_backgroundCheckInterval">Background Check Interval</string>
 
-    <string name="settings_checkbox_useAndroidDM">Use Android Download Manager</string>
+    <string name="settings_switch_useAndroidDM">Use Android Download Manager</string>
     <string name="settings_btn_useProxy">Use proxy</string>
     <string name="settings_btn_downloadLocation">Download location</string>
     <string name="settings_btn_staticFilename">Static filename</string>
@@ -78,7 +78,7 @@
     <string name="settings_info_onPostInstall">Zip files placed under /sdcard/PurityU2D/onPostUpdate/ will be flashed automatically after installing ROM updates.</string>
 
     <string name="prompt_install1">The ROM was downloaded successfully.\nClick %1$s to reboot and install it now.\nClick %2$s to install later.</string>
-    <string name="prompt_install2">The ROM zip already exists with a matching md5.\nClick %1$s to reboot and install it now.\nClick %2$s to install later.</string>
+    <string name="prompt_install2">The ROM zip already exists with a matching md5.\nClick %1$s to install it now.\nClick %2$s to install later.</string>
     <string name="prompt_md5mismatch">The ROM was downloaded successfully. However MD5 hash does not match the original file.\n\nOriginal:%1$s\nCalculated:%2$s</string>
     <string name="prompt_rootFail">Failed to acquire root access.\nYou may proceed and download ROM updates through the app but ROM installation will not work without root.\nPlease check your superuser app.</string>
     <string name="prompt_romBase">What ROM base do you like to have?</string>
@@ -87,5 +87,14 @@
     <string name="prompt_zipExtension">Do not forget to add .zip file extension</string>
     <string name="receive_latest_version">Receive the latest version</string>
     <string name="toast_restartApp">Restart the application</string>
+    <string name="switch_bnrKernel">Backup and restore current kernel</string>
+    <string name="switch_wipeCache">Wipe cache partition</string>
+    <string name="switch_wipeDalvik">Wipe dalvik cache</string>
+    <string name="switch_factoryReset">Factory reset (Clean flash)</string>
+    <string name="switch_factoryReset_summary">Wipes data, cache and dalvik cache.</string>
+    <string name="title_installQueue">Install queue</string>
+    <string name="empty">Empty</string>
+    <string name="hint_swipeToInstall">Swipe to install</string>
+    <string name="flash_a_zip">Flash a ZIP</string>
 
 </resources>

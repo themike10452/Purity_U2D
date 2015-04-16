@@ -1,4 +1,4 @@
-package lb.themike10452.PurityU2D;
+package lb.themike10452.purityu2d;
 
 import java.util.HashSet;
 import java.util.Scanner;

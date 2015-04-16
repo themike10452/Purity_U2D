@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 22
     buildToolsVersion "21.1.2"
 
     lintOptions {
@@ -9,10 +9,10 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 21
-        versionCode 12
-        versionName "5.6"
+        minSdkVersion 21
+        targetSdkVersion 22
+        versionCode 20
+        versionName "6.0"
     }
 
     signingConfigs {
@@ -38,5 +38,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile "com.android.support:support-v4:21.0.3"
+    compile "com.android.support:support-v4:22.0.0"
+    compile "com.android.support:cardview-v7:22.0.0"
 }

@@ -1,8 +1,9 @@
-package lb.themike10452.PurityU2D;
+package lb.themike10452.purityu2d;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -47,15 +48,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
 
-import lb.themike10452.PurityU2D.Services.BackgroundAutoCheckService;
+import lb.themike10452.purityu2d.services.BackgroundAutoCheckService;
 
 /**
  * Created by Mike on 9/19/2014.
  */
-public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListener {
+public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener {
 
     public static SharedPreferences preferences;
-    public static boolean running;
+    public static boolean isVisible;
     private String DEVICE = Build.DEVICE;
     private String DEVICE_PART, CHANGELOG;
     private Tools tools;
@@ -79,15 +80,15 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
 
                             refreshLayout.setRefreshing(true);
 
-                            View v1 = LayoutInflater.from(Main.this).inflate(R.layout.rom_info_layout, null);
+                            View v1 = LayoutInflater.from(MainActivity.this).inflate(R.layout.rom_info, null);
                             ((TextView) v1.findViewById(R.id.text)).setText(Tools.getBuildVersion());
 
-                            tag = new TextView(Main.this);
-                            tag.setTextAppearance(Main.this, android.R.style.TextAppearance_Small);
+                            tag = new TextView(MainActivity.this);
+                            tag.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Small);
                             tag.setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"), Typeface.BOLD);
                             tag.setTextSize(10f);
 
-                            Card card1 = new Card(Main.this, getString(R.string.card_title_installedROM), tag, false, v1);
+                            Card card1 = new Card(MainActivity.this, getString(R.string.card_title_installedROM), tag, false, v1);
                             card1.getPARENT().setAnimation(getIntroSet(1000, 0));
 
                             main.addView(card1.getPARENT());
@@ -99,7 +100,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                             try {
                                 DEVICE_SUPPORTED = true;
                                 boolean b = getDevicePart();
-                                Main.this.runOnUiThread(new Runnable() {
+                                MainActivity.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         initSettings();
@@ -132,7 +133,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
 
                             try {
                                 if (Tools.getMinVer(DEVICE_PART) != null && Tools.getMinVer(DEVICE_PART) > Double.parseDouble(Tools.retainDigits(getPackageManager().getPackageInfo(getPackageName(), 0).versionName))) {
-                                    new AlertDialog.Builder(Main.this)
+                                    new AlertDialog.Builder(MainActivity.this)
                                             .setMessage(R.string.msg_updateRequired)
                                             .setTitle(R.string.msgTitle_versionObs)
                                             .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
@@ -152,7 +153,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                                             .setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {
                                                         @Override
                                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                                            Main.this.finish();
+                                                            MainActivity.this.finish();
                                                         }
                                                     }
                                             )
@@ -178,7 +179,22 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                                 }
                             }
 
-                            if (Tools.INSTALLED_ROM_VERSION.equalsIgnoreCase(BuildManager.getInstance().getProperBuild(getApplicationContext()).getVERSION())) {
+                            String latestVersion = BuildManager.getInstance().getProperBuild(getApplicationContext()).getVERSION();
+                            if (latestVersion != null && Tools.INSTALLED_ROM_VERSION != null) {
+                                try {
+                                    int lv = Integer.parseInt(latestVersion.trim());
+                                    int cv = Integer.parseInt(Tools.INSTALLED_ROM_VERSION);
+                                    System.out.println(lv + " " + cv);
+                                    if (cv >= lv) {
+                                        if (preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").equalsIgnoreCase("*latest*"))
+                                            displayOnScreenMessage(main, R.string.msg_up_to_date);
+                                        else
+                                            displayOnScreenMessage(main, getString(R.string.msg_up_to_date) + " (" + preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "n/a") + ")");
+                                        return;
+                                    }
+                                } catch (Exception ignored) {
+                                }
+                            } else if (Tools.INSTALLED_ROM_VERSION.equalsIgnoreCase(latestVersion)) {
                                 if (preferences.getString(Keys.KEY_SETTINGS_ROMAPI, "").equalsIgnoreCase("*latest*"))
                                     displayOnScreenMessage(main, R.string.msg_up_to_date);
                                 else
@@ -186,7 +202,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                                 return;
                             }
 
-                            View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.new_rom_layout, null);
+                            View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.new_rom, null);
                             String ver = BuildManager.getInstance().getProperBuild(getApplicationContext()).getVERSION();
 
                             ((TextView) v.findViewById(R.id.text)).setText(ver);
@@ -236,16 +252,23 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
     protected void onStart() {
         super.onStart();
         overridePendingTransition(R.anim.slide_in_ltr, R.anim.slide_out_ltr);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.cancelAll();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isVisible = true;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_layout);
+        setContentView(R.layout.main_activity);
 
         this.tools = new Tools(this);
         preferences = getSharedPreferences(Keys.SharedPrefsKey, MODE_PRIVATE);
-        running = true;
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
         refreshLayout.setColorSchemeResources(R.color.green, android.R.color.holo_orange_light, android.R.color.holo_red_light);
@@ -266,7 +289,6 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
         File onPostUpd = new File(Environment.getExternalStorageDirectory() + File.separator + "PurityU2D" + File.separator + "onPostUpdate");
         if (!onPostUpd.exists() || !onPostUpd.isDirectory())
             onPostUpd.mkdirs();
-
     }
 
     private void chuckNorris() {
@@ -319,28 +341,35 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
-            case R.id.action_about:
+            case R.id.action_about: {
                 showAboutDialog();
                 return true;
-            case R.id.action_settings:
-                Intent i = new Intent(Main.this, Settings.class);
+            }
+            case R.id.action_settings: {
+                Intent i = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(i);
                 return true;
+            }
+            case R.id.action_flashZip: {
+                Intent i = new Intent(MainActivity.this, InstallationActivity.class);
+                startActivity(i);
+                return true;
+            }
         }
         return false;
     }
 
     private void showChangelog() {
-        TextView textView = new TextView(Main.this);
+        TextView textView = new TextView(MainActivity.this);
         textView.setText(CHANGELOG);
         textView.setTextAppearance(getApplicationContext(), android.R.style.TextAppearance_Small);
         textView.setTextColor(getResources().getColor(R.color.card_text));
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
-        View view1 = LayoutInflater.from(Main.this).inflate(R.layout.blank_view, null);
+        View view1 = LayoutInflater.from(MainActivity.this).inflate(R.layout.blank, null);
         view1.setPadding(15, 15, 15, 15);
         ((LinearLayout) view1).addView(textView, params);
-        new AlertDialog.Builder(Main.this)
+        new AlertDialog.Builder(MainActivity.this)
                 .setView(view1)
                 .setTitle(R.string.dialog_title_changelog)
                 .setCancelable(false)
@@ -360,7 +389,6 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
     }
 
     private synchronized AnimationSet getIntroSet(int duration, int startOffset) {
-        //AlphaAnimation animation1 = new AlphaAnimation(0, 1);
 
         TranslateAnimation animation2 = new TranslateAnimation(
                 Animation.RELATIVE_TO_SELF, 0,
@@ -369,7 +397,6 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                 Animation.RELATIVE_TO_SELF, 0);
 
         final AnimationSet set = new AnimationSet(false);
-        //set.addAnimation(animation1);
         set.addAnimation(animation2);
         set.setDuration(duration);
         set.setStartOffset(startOffset);
@@ -430,6 +457,12 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                 });
                 return false;
             }
+
+            String firstLine = s.nextLine();
+            if (firstLine != null && !firstLine.equals(Keys.VALIDITY_KEY)) {
+                return false;
+            }
+
             String pattern = String.format("<%s>", DEVICE);
             while (s.hasNextLine()) {
                 if (s.nextLine().equalsIgnoreCase(pattern)) {
@@ -485,10 +518,10 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
     }
 
     private void displayOnScreenMessage(LinearLayout main, String msgStr) {
-        TextView textView = new TextView(Main.this);
+        TextView textView = new TextView(MainActivity.this);
         textView.setText(msgStr);
         textView.setGravity(Gravity.CENTER_HORIZONTAL);
-        textView.setTextAppearance(Main.this, android.R.style.TextAppearance_Medium);
+        textView.setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Medium);
         textView.setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-LightItalic.ttf"), Typeface.BOLD_ITALIC);
         textView.setTextColor(getResources().getColor(R.color.card_text_light));
         main.addView(textView);
@@ -498,80 +531,17 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
     private void getIt() {
         final String link = BuildManager.getInstance().getProperBuild(getApplicationContext()).getHTTPLINK();
         if (link != null) {
-            final boolean b = preferences.getBoolean(Keys.KEY_SETTINGS_USEANDM, false);
+            final boolean useADM = preferences.getBoolean(Keys.KEY_SETTINGS_USEANDM, false);
             String destination = preferences
-                    .getString(Keys.KEY_SETTINGS_DOWNLOADLOCATION, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator);
+                    .getString(Keys.KEY_SETTINGS_DOWNLOADLOCATION,
+                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator);
 
             BroadcastReceiver downloadHandler = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, final Intent intent) {
                     unregisterReceiver(this);
-                    AlertDialog.Builder builder = new AlertDialog.Builder(Main.this);
-                    Dialog d = null;
                     String action = intent.getAction();
-                    if (action != null)
-                        if (action.equals(Tools.EVENT_DOWNLOAD_COMPLETE)) {
-                            boolean md5Matched = intent.getBooleanExtra("match", true);
-                            if (md5Matched) {
-                                d = builder
-                                        .setTitle(R.string.dialog_title_readyToInstall)
-                                        .setCancelable(false)
-                                        .setMessage(getString(R.string.prompt_install1, getString(R.string.btn_install), getString(R.string.btn_dismiss)))
-                                        .setPositiveButton(R.string.btn_install, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                tools.createOpenRecoveryScript("install " + tools.lastDownloadedFile.getAbsolutePath(), true, false);
-                                            }
-                                        })
-                                        .setNegativeButton(R.string.btn_dismiss, null)
-                                        .show();
-                                Tools.userDialog = d;
-                            } else {
-                                d = builder.setTitle(R.string.dialog_title_md5mismatch)
-                                        .setCancelable(false)
-                                        .setMessage(getString(R.string.prompt_md5mismatch, BuildManager.getInstance().getProperBuild(getApplicationContext()).getMD5(), intent.getStringExtra("md5")))
-                                        .setPositiveButton(R.string.btn_downloadAgain, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                getIt();
-                                            }
-                                        })
-                                        .setNegativeButton(R.string.btn_installAnyway, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                tools.createOpenRecoveryScript("install " + tools.lastDownloadedFile.getAbsolutePath(), true, false);
-                                            }
-                                        })
-                                        .setNeutralButton(R.string.btn_dismiss, null)
-                                        .show();
-                                Tools.userDialog = d;
-                            }
-                        } else if (intent.getAction().equals(Tools.EVENT_DOWNLOADEDFILE_EXISTS)) {
-
-                            if (Tools.userDialog != null)
-                                Tools.userDialog.dismiss();
-
-                            d = builder
-                                    .setTitle(R.string.dialog_title_readyToInstall)
-                                    .setCancelable(false)
-                                    .setMessage(getString(R.string.prompt_install2, getString(R.string.btn_install), getString(R.string.btn_dismiss)))
-                                    .setPositiveButton(R.string.btn_install, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            tools.createOpenRecoveryScript("install " + tools.lastDownloadedFile.getAbsolutePath(), true, false);
-                                        }
-                                    })
-                                    .setNegativeButton(R.string.btn_dismiss, null)
-                                    .show();
-                            Tools.userDialog = d;
-                        } else if (action.equals(Tools.EVENT_DOWNLOAD_CANCELED)) {
-                            Toast.makeText(getApplicationContext(), R.string.msg_downloadCanceled, Toast.LENGTH_SHORT).show();
-                        }
-                    if (d != null && d.findViewById(android.R.id.message) != null) {
-                        ((TextView) d.findViewById(android.R.id.message)).setTextAppearance(Main.this, android.R.style.TextAppearance_Small);
-                        ((TextView) d.findViewById(android.R.id.message)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"));
-                    }
-
+                    handleDownloadEvent(action, intent.getStringExtra(Tools.EXTRA_MD5), intent.getBooleanExtra(Tools.EXTRA_MD5_MATCHED, false));
                 }
             };
 
@@ -580,22 +550,98 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
             } catch (Exception ignored) {
             }
 
-            IntentFilter filter = new IntentFilter();
+            IntentFilter filter = new IntentFilter(Tools.EVENT_DOWNLOAD_COMPLETE);
             filter.addAction(Tools.EVENT_DOWNLOAD_CANCELED);
-            filter.addAction(Tools.EVENT_DOWNLOAD_COMPLETE);
             filter.addAction(Tools.EVENT_DOWNLOADEDFILE_EXISTS);
 
             registerReceiver(downloadHandler, filter);
-            //registerReceiver(downloadCancellationReceiver, new IntentFilter(Tools.EVENT_DOWNLOAD_CANCELED));
-            //registerReceiver(downloadHandler, new IntentFilter(Tools.EVENT_DOWNLOAD_COMPLETE));
-            //registerReceiver(downloadHandler, new IntentFilter(Tools.EVENT_DOWNLOADEDFILE_EXISTS));
 
-            tools.downloadFile(link, destination, BuildManager.getInstance().getProperBuild(getApplicationContext()).getZIPNAME(), BuildManager.getInstance().getProperBuild(getApplicationContext()).getMD5(), b);
+            lb.themike10452.purityu2d.Build properBuild = BuildManager.getInstance().getProperBuild(getApplicationContext());
+
+            tools.downloadFile(
+                    link,
+                    destination,
+                    properBuild.getZIPNAME(),
+                    properBuild.getMD5(),
+                    useADM,
+                    this
+            );
+        }
+    }
+
+    private void proceedToInstallation() {
+        Intent intent = new Intent(MainActivity.this, InstallationActivity.class);
+        intent.putExtra(InstallationActivity.EXTRA_INITIAL_ZIP, tools.lastDownloadedFile.getAbsolutePath());
+        startActivity(intent);
+    }
+
+    private void handleDownloadEvent(String action, String md5hash, boolean md5match) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        Dialog d = null;
+        if (action != null)
+            if (action.equals(Tools.EVENT_DOWNLOAD_COMPLETE)) {
+                if (md5match) {
+                    d = builder
+                            .setTitle(R.string.dialog_title_readyToInstall)
+                            .setCancelable(false)
+                            .setMessage(getString(R.string.prompt_install1, getString(R.string.btn_install), getString(R.string.btn_dismiss)))
+                            .setPositiveButton(R.string.btn_install, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    proceedToInstallation();
+                                }
+                            })
+                            .setNegativeButton(R.string.btn_dismiss, null)
+                            .show();
+                    Tools.userDialog = d;
+                } else {
+                    d = builder.setTitle(R.string.dialog_title_md5mismatch)
+                            .setCancelable(false)
+                            .setMessage(getString(R.string.prompt_md5mismatch, BuildManager.getInstance().getProperBuild(getApplicationContext()).getMD5(), md5hash))
+                            .setPositiveButton(R.string.btn_downloadAgain, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    getIt();
+                                }
+                            })
+                            .setNegativeButton(R.string.btn_installAnyway, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    proceedToInstallation();
+                                }
+                            })
+                            .setNeutralButton(R.string.btn_dismiss, null)
+                            .show();
+                    Tools.userDialog = d;
+                }
+            } else if (action.equals(Tools.EVENT_DOWNLOADEDFILE_EXISTS)) {
+                if (Tools.userDialog != null) {
+                    Tools.userDialog.dismiss();
+                }
+                d = builder
+                        .setTitle(R.string.dialog_title_readyToInstall)
+                        .setCancelable(false)
+                        .setMessage(getString(R.string.prompt_install2, getString(R.string.btn_install), getString(R.string.btn_dismiss)))
+                        .setPositiveButton(R.string.btn_install, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                proceedToInstallation();
+                            }
+                        })
+                        .setNegativeButton(R.string.btn_dismiss, null)
+                        .show();
+                Tools.userDialog = d;
+            } else if (action.equals(Tools.EVENT_DOWNLOAD_CANCELED)) {
+                Toast.makeText(getApplicationContext(), R.string.msg_downloadCanceled, Toast.LENGTH_SHORT).show();
+            }
+        if (d != null && d.findViewById(android.R.id.message) != null) {
+            ((TextView) d.findViewById(android.R.id.message)).setTextAppearance(MainActivity.this, android.R.style.TextAppearance_Small);
+            ((TextView) d.findViewById(android.R.id.message)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"));
         }
     }
 
     private void showAboutDialog() {
-        LinearLayout contentView = (LinearLayout) ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.blank_view, null);
+        LinearLayout contentView = (LinearLayout) ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.blank, null);
         contentView.setGravity(Gravity.CENTER);
         contentView.setPadding(30, 40, 30, 40);
 
@@ -663,7 +709,6 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
         final boolean a = preferences.getString(Keys.KEY_SETTINGS_ROMBASE, null) == null;
         final boolean b = preferences.getString(Keys.KEY_SETTINGS_ROMAPI, null) == null;
 
-
         if (b) {
             showRomApiChooserDialog(a);
         } else if (a) {
@@ -676,7 +721,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
 
         ProgressDialog d;
 
-        d = new ProgressDialog(Main.this);
+        d = new ProgressDialog(MainActivity.this);
         d.setMessage(getString(R.string.msg_pleaseWait));
         d.setIndeterminate(true);
         d.setCancelable(false);
@@ -715,7 +760,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                 return;
             }
             final String[] choices = versions;
-            new AlertDialog.Builder(Main.this)
+            new AlertDialog.Builder(MainActivity.this)
                     .setSingleChoiceItems(displayVersions, -1, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -741,7 +786,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
 
         ProgressDialog d;
 
-        d = new ProgressDialog(Main.this);
+        d = new ProgressDialog(MainActivity.this);
         d.setMessage(getString(R.string.msg_pleaseWait));
         d.setIndeterminate(true);
         d.setCancelable(false);
@@ -790,7 +835,7 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
                     .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            startService(new Intent(Main.this, BackgroundAutoCheckService.class));
+                            startService(new Intent(MainActivity.this, BackgroundAutoCheckService.class));
                             chuckNorris();
                         }
                     })
@@ -808,9 +853,9 @@ public class Main extends Activity implements SwipeRefreshLayout.OnRefreshListen
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        running = false;
+    protected void onPause() {
+        super.onPause();
+        isVisible = false;
     }
 
     @Override

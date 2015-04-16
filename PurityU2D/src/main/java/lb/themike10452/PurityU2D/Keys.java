@@ -1,4 +1,4 @@
-package lb.themike10452.PurityU2D;
+package lb.themike10452.purityu2d;
 
 /**
  * Created by Mike on 9/20/2014.
@@ -7,7 +7,7 @@ public class Keys {
 
     public static final String SharedPrefsKey = "Settings_2";
     public static String DEFAULT_SOURCE = "https://docs.google.com/uc?authuser=0&id=0B8S4T0fxh3gubG9KRFoxMjN0d1E&export=download";
-    //public static String DEFAULT_SOURCE = "http://pastebin.com/raw.php?i=2g5HLsPy";
+    //public static String DEFAULT_SOURCE = "http://pastebin.com/download.php?i=nQKVKBrR";
     public static String SOURCE_CODE = "https://github.com/themike10452/Purity_U2D";
     public static String TAG_NOTIF = "THEMIKE10452.HKU.UPDNOTIF";
     public static String VALIDITY_KEY = "::LB.THEMIKE10452.PURITY-U2D::";
