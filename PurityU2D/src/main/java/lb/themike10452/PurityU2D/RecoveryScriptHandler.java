@@ -54,6 +54,10 @@ public class RecoveryScriptHandler {
                 commandList.add("restore /sdcard/TWRP/BACKUPS/" + Build.SERIAL + "/purity_ota_" + timestamp);
                 commandList.add("cmd rm -r /sdcard/TWRP/BACKUPS/" + Build.SERIAL + "/purity_ota_" + timestamp);
             }
+        } else {
+            for (String file : FILES) {
+                commandList.add("install " + file);
+            }
         }
 
         final SUShell suShell = SUShell.getInstance();
@@ -65,7 +69,7 @@ public class RecoveryScriptHandler {
                         String ors = "/cache/recovery/openrecoveryscript";
                         boolean firstRun = true;
                         for (String command : commandList) {
-                            suShell.run("echo " + command + (firstRun? " > " : " >> ") + ors);
+                            suShell.run("echo " + command + (firstRun ? " > " : " >> ") + ors);
                             firstRun = false;
                         }
                         suShell.run("reboot recovery");
@@ -79,8 +83,6 @@ public class RecoveryScriptHandler {
                 protected void onPostExecute(Boolean hasRoot) {
                     if (!hasRoot) {
                         Toast.makeText(context, R.string.prompt_rootFail, Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(context, R.string.onReboot, Toast.LENGTH_LONG).show();
                     }
                 }
             }.execute();
