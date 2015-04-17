@@ -3,6 +3,7 @@ package lb.themike10452.purityu2d;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -107,12 +108,20 @@ public class InstallationActivity extends Activity {
                 if (seekBar.getProgress() < seekBar.getMax()) {
                     resetSlider(seekBar);
                 } else {
+                    final ProgressDialog dialog = new ProgressDialog(InstallationActivity.this);
+                    dialog.setIndeterminate(true);
+                    dialog.setCancelable(false);
+                    dialog.setMessage(getString(R.string.msg_pleaseWait));
+                    dialog.show();
                     seekBar.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             resetSlider(seekBar);
+                            if (dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
                         }
-                    }, 3000);
+                    }, 10000);
                     rebootAndInstall();
                 }
             }
