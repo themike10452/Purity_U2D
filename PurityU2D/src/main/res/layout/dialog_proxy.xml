@@ -42,7 +42,7 @@
                 android:layout_marginTop="15dp"
                 android:clickable="true"
                 android:text="@string/defaultt"
-                android:textColor="@color/green" />
+                android:textColor="@color/teal" />
 
             <TextView
                 android:id="@+id/pl"
@@ -51,7 +51,7 @@
                 android:layout_marginTop="15dp"
                 android:clickable="true"
                 android:text="@string/proxy_list"
-                android:textColor="@color/green" />
+                android:textColor="@color/teal" />
         </LinearLayout>
     </LinearLayout>
 

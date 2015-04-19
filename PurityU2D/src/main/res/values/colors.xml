@@ -3,13 +3,13 @@
     <color name="background">#eeeeee</color>
     <color name="card_text">#717171</color>
     <color name="card_text_light">#d5d5d5</color>
-    <color name="card_text_soft">#ffa9a9a9</color>
+    <color name="card_text_soft">#a9a9a9</color>
     <color name="card_separator">#e5e5e5</color>
     <color name="card_shadow">#dbdbdb</color>
     <color name="card_background">#ffffff</color>
     <color name="settings_separator">#e5e5e5</color>
     <color name="textColorSecondary">#818181</color>
-    <color name="green">#ff08ad00</color>
+    <color name="colorControlHighlight">#d9d9d9</color>
     <color name="grey">#30000000</color>
     <color name="teal">#009688</color>
     <color name="teal2">#00897B</color>

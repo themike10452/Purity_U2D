@@ -11,24 +11,6 @@
         android:orientation="vertical"
         android:padding="?android:attr/listPreferredItemPaddingStart">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:background="@color/accentColor"
-            android:padding="5dp">
-
-            <TextView
-                android:id="@+id/topInfo"
-                style="@style/preferenceInformationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/settings_info_onPostInstall"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="?android:attr/textColorHint"
-                android:textSize="12sp" />
-        </LinearLayout>
-
         <TextView
             style="?android:attr/preferenceCategoryStyle"
             android:layout_width="wrap_content"
@@ -124,13 +106,7 @@
             android:text="@string/settings_category_proxy"
             android:textStyle="bold" />
 
-        <View
-            style="?android:attr/listSeparatorTextViewStyle"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:background="@color/settings_separator" />
+        <include layout="@layout/margin_separator" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -138,14 +114,12 @@
 
             <LinearLayout
                 android:id="@+id/btn_editProxy"
+                style="@style/clickableItemStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_toStartOf="@+id/switch_useProxy"
-                android:background="@drawable/translucent_button"
-                android:clickable="true"
-                android:orientation="vertical"
-                android:padding="5dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/title0"
@@ -167,6 +141,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
                 android:checked="true" />
 
         </RelativeLayout>
@@ -180,13 +155,7 @@
             android:text="@string/settings_category_downloads"
             android:textStyle="bold" />
 
-        <View
-            style="?android:attr/listSeparatorTextViewStyle"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:background="@color/settings_separator" />
+        <include layout="@layout/margin_separator" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -226,12 +195,7 @@
                 android:checked="true" />
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginBottom="3dp"
-            android:layout_marginTop="3dp"
-            android:background="@color/settings_separator" />
+        <include layout="@layout/separator" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -239,13 +203,12 @@
 
             <LinearLayout
                 android:id="@+id/btn_staticFilename"
+                style="@style/clickableItemStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_toLeftOf="@+id/switch_useStaticFilename"
-                android:background="@drawable/translucent_button"
-                android:orientation="vertical"
-                android:padding="5dp">
+                android:layout_toStartOf="@+id/switch_useStaticFilename"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/title2"
@@ -280,19 +243,13 @@
                 android:checked="true" />
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginBottom="3dp"
-            android:layout_marginTop="3dp"
-            android:background="@color/settings_separator" />
+        <include layout="@layout/separator" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp">
-
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp">
 
             <TextView
                 android:id="@+id/title3"
@@ -314,21 +271,14 @@
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginBottom="3dp"
-            android:layout_marginTop="3dp"
-            android:background="@color/settings_separator" />
+        <include layout="@layout/separator" />
 
         <LinearLayout
             android:id="@+id/btn_dlLoc"
+            style="@style/clickableItemStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/translucent_button"
-            android:clickable="true"
-            android:orientation="vertical"
-            android:padding="5dp">
+            android:orientation="vertical">
 
             <TextView
                 style="?android:attr/preferenceLayoutChild"
@@ -344,21 +294,14 @@
                 android:layout_marginTop="3dp" />
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginBottom="3dp"
-            android:layout_marginTop="3dp"
-            android:background="@color/settings_separator" />
+        <include layout="@layout/separator" />
 
         <LinearLayout
             android:id="@+id/btn_upSrc"
+            style="@style/clickableItemStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/translucent_button"
-            android:clickable="true"
-            android:orientation="vertical"
-            android:padding="5dp">
+            android:orientation="vertical">
 
             <TextView
                 style="?android:attr/preferenceLayoutChild"
@@ -383,22 +326,14 @@
             android:text="@string/settings_category_romBase"
             android:textStyle="bold" />
 
-        <View
-            style="?android:attr/listSeparatorTextViewStyle"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:background="@color/settings_separator" />
+        <include layout="@layout/margin_separator" />
 
         <LinearLayout
             android:id="@+id/btn_romBase"
+            style="@style/clickableItemStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/translucent_button"
-            android:clickable="true"
-            android:orientation="vertical"
-            android:padding="5dp">
+            android:orientation="vertical">
 
             <TextView
                 style="?android:attr/preferenceLayoutChild"
@@ -415,21 +350,14 @@
 
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginBottom="3dp"
-            android:layout_marginTop="3dp"
-            android:background="@color/settings_separator" />
+        <include layout="@layout/separator" />
 
         <LinearLayout
             android:id="@+id/btn_romApi"
+            style="@style/clickableItemStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/translucent_button"
-            android:clickable="true"
-            android:orientation="vertical"
-            android:padding="5dp">
+            android:orientation="vertical">
 
             <TextView
                 style="?android:attr/preferenceLayoutChild"

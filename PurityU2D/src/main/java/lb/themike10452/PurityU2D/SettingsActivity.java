@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -98,8 +97,6 @@ public class SettingsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
         overridePendingTransition(R.anim.slide_in_rtl, R.anim.slide_out_rtl);
-
-        ((TextView) findViewById(R.id.topInfo)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf"));
 
         ((Switch) findViewById(R.id.switch_useProxy)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -557,7 +554,7 @@ public class SettingsActivity extends Activity {
         textView.setText(msg);
         ((LinearLayout) child).addView(textView, params);
         ((LinearLayout) child).addView(editText, params);
-        Dialog dialog = new Dialog(activity, android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth);
+        Dialog dialog = new Dialog(activity, R.style.DialogStyle);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(child);
         dialog.show();

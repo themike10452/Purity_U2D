@@ -96,5 +96,6 @@
     <string name="empty">Empty</string>
     <string name="hint_swipeToInstall">Swipe to install</string>
     <string name="flash_a_zip">Flash a ZIP</string>
+    <string name="dialog_content_github">Source on Github</string>
 
 </resources>

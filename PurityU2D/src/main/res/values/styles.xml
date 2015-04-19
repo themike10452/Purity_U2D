@@ -1,12 +1,26 @@
 <resources>
+
     <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
         <item name="android:colorAccent">@color/accentColor</item>
         <item name="android:colorPrimary">@color/primaryColor</item>
         <item name="android:statusBarColor">@color/teal2</item>
         <item name="android:navigationBarColor">@color/teal2</item>
+        <item name="android:colorControlHighlight">@color/colorControlHighlight</item>
     </style>
+
+    <style name="DialogStyle" parent="android:Theme.Material.Light.Dialog.MinWidth" />
+
     <style name="preferenceInformationStyle">
         <item name="android:textAppearance">?android:textAppearanceSmall</item>
         <item name="android:textColor">@color/textColorSecondary</item>
+    </style>
+
+    <style name="clickableItemStyle">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
+        <item name="android:paddingTop">15dp</item>
+        <item name="android:paddingBottom">15dp</item>
     </style>
 </resources>

@@ -271,7 +271,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         preferences = getSharedPreferences(Keys.SharedPrefsKey, MODE_PRIVATE);
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
-        refreshLayout.setColorSchemeResources(R.color.green, android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        refreshLayout.setColorSchemeResources(R.color.teal, android.R.color.holo_orange_light, android.R.color.holo_red_light);
         refreshLayout.setOnRefreshListener(this);
 
         main = ((LinearLayout) findViewById(R.id.main));
@@ -285,10 +285,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
         ((TextView) findViewById(R.id.bottom_msg)).setText(getString(R.string.msg_troubleProxy, getString(R.string.activity_settings), getString(R.string.settings_btn_useProxy)));
         findViewById(R.id.bottom_bar).setVisibility(preferences.getBoolean(Keys.KEY_SETTINGS_USEPROXY, false) ? View.GONE : View.VISIBLE);
-
-        File onPostUpd = new File(Environment.getExternalStorageDirectory() + File.separator + "PurityU2D" + File.separator + "onPostUpdate");
-        if (!onPostUpd.exists() || !onPostUpd.isDirectory())
-            onPostUpd.mkdirs();
     }
 
     private void chuckNorris() {
@@ -641,45 +637,34 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     }
 
     private void showAboutDialog() {
-        LinearLayout contentView = (LinearLayout) ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.blank, null);
-        contentView.setGravity(Gravity.CENTER);
-        contentView.setPadding(30, 40, 30, 40);
+        View contentView = getLayoutInflater().inflate(R.layout.dialog_about, null, false);
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        TextView devText = (TextView) contentView.findViewById(R.id.devinfo);
+        devText.setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"));
+        devText.setText(getString(R.string.dialog_content_about, "Michael Mouawad"));
 
-        TextView text1 = new TextView(this);
-        text1.setTextAppearance(this, android.R.style.TextAppearance_Small);
-        text1.setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"));
-        text1.setText(getString(R.string.dialog_content_about, "THEMIKE10452"));
-        contentView.addView(text1, params);
-
-        TextView text2 = new TextView(this);
-        text2.setTextAppearance(this, android.R.style.TextAppearance_Small);
+        TextView verText = (TextView) contentView.findViewById(R.id.verinfo);
         try {
-            text2.setText("v" + getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
-        } catch (PackageManager.NameNotFoundException ingored) {
+            verText.setText("v" + getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+        } catch (PackageManager.NameNotFoundException ignored) {
         }
-        params.setMargins(0, 40, 0, 0);
-        contentView.addView(text2, params);
 
-        SpannableString content = new SpannableString("Github");
+        SpannableString content = new SpannableString(getString(R.string.dialog_content_github));
         content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
 
-        TextView text3 = new TextView(this);
-        text3.setTextAppearance(this, android.R.style.TextAppearance_Small);
-        text3.setTextColor(getResources().getColor(R.color.green));
-        text3.setText(content);
-        text3.setClickable(true);
-        text3.setOnClickListener(new View.OnClickListener() {
+        TextView gitText = (TextView) contentView.findViewById(R.id.gitinfo);
+        gitText.setTextColor(getResources().getColor(R.color.teal));
+        gitText.setText(content);
+        gitText.setClickable(true);
+        gitText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Keys.SOURCE_CODE));
                 startActivity(intent);
             }
         });
-        contentView.addView(text3, params);
 
-        Dialog d = new Dialog(this, android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth);
+        Dialog d = new Dialog(this, R.style.DialogStyle);
         d.requestWindowFeature(Window.FEATURE_NO_TITLE);
         d.setContentView(contentView);
         d.show();

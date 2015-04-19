@@ -24,18 +24,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="lb.themike10452.purityu2d.SettingsActivity"
             android:label="@string/activity_settings"
             android:parentActivityName="lb.themike10452.purityu2d.MainActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name="lb.themike10452.purityu2d.filebrowser.FileBrowser"
             android:label="@string/activity_fileBrowser"
             android:screenOrientation="portrait" />
+
         <activity
             android:name="lb.themike10452.purityu2d.InstallationActivity"
             android:label="@string/dialog_title_readyToInstall"
+            android:parentActivityName="lb.themike10452.purityu2d.MainActivity"
             android:screenOrientation="portrait" />
 
         <service
