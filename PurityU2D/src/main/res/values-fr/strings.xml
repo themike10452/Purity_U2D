@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Translated by Paul De la Pomélie -->
+
+<resources>
+    <string name="app_name">Purity U2D</string>
+    <string name="version">Version</string>
+    <string name="action_refresh">Actualiser</string>
+    <string name="action_about">A propos</string>
+
+    <string name="activity_settings">Paramètres</string>
+    <string name="activity_fileBrowser">Parcourir</string>
+
+    <string name="hours">Heures</string>
+    <string name="minutes">Minutes</string>
+    <string name="defaultt">Par Défaut</string>
+    <string name="undefined">Non défini</string>
+    <string name="onReboot">Redémarrage …</string>
+    <string name="proxy_list">Liste des Proxy</string>
+    <string name="wrap">Aller</string>
+    <string name="unwrap">Ignorer</string>
+
+    <string name="dialog_title_downloading">Téléchargement en cours …</string>
+    <string name="dialog_title_changelog">Journal des Modifications</string>
+    <string name="dialog_title_readyToInstall">Prêt pour l\'installation</string>
+    <string name="dialog_title_md5mismatch">MD5 différent</string>
+    <string name="dialog_title_rootFail">L\'accès root est requis pour faire cette action !</string>
+
+    <string name="dialog_content_about">Développé par %1$s</string>
+
+    <string name="card_title_latestVersion">Dernière version</string>
+    <string name="card_title_installedROM">Version installée</string>
+
+    <string name="field_filesize">Taille du fichier</string>
+    <string name="filed_filename">Nom du fichier</string>
+    <string name="field_downloaded">Téléchargé</string>
+
+    <string name="msg_pleaseWait">Veuillez patienter …</string>
+    <string name="msg_up_to_date">Votre système est à jour !</string>
+    <string name="msg_failed_try_again">Erreur, veuillez réessayer plus tard :/</string>
+    <string name="msg_device_not_supported">Appareil non supporté</string>
+    <string name="msg_downloadCanceled">Téléchargement annulé</string>
+    <string name="msg_downloadComplete">Téléchargement terminé</string>
+    <string name="msg_updateFound">Une nouvelle version a été trouvé !</string>
+    <string name="msg_changeable">Cette fonctionnalité peut être modifiée depuis le menu Paramètre de l\'application."</string>
+    <string name="msg_noROMForYou">Il n\'y a pas %1$s ROM pour %2$s</string>
+    <string name="msg_twrp">L\'installation automatisée ne fonctionne qu\'avec TWRP. CWM n\'est pas supporté.</string>
+    <string name="msg_activeDownloads">Vous ne pouvez pas quitter : un téléchargement est en cours.</string>
+    <string name="msg_invalidFilename">Nom du fichier invalide</string>
+    <string name="msg_invalidProxy">Configuration proxy invalide</string>
+    <string name="msg_troubleProxy">Des problèmes de connection ? %1$s > %2$s</string>
+    <string name="msg_updateRequired">Veuillez mettre à jour vers une version plus récente depuis le Play Store.</string>
+    <string name="msgTitle_versionObs">Version obsolète</string>
+
+    <string name="btn_whatsNew">Nouveautés</string>
+    <string name="btn_getIt">Allons-y</string>
+    <string name="btn_ok">Ok</string>
+    <string name="btn_cancel">Annuler</string>
+    <string name="btn_dismiss">Ignorer</string>
+    <string name="btn_install">Continuer</string>
+    <string name="btn_installAnyway">Continuer quand même</string>
+    <string name="btn_downloadAgain">Re-télécharger</string>
+
+    <string name="settings_category_backgroundCheck">VERIFICATION MAJ</string>
+    <string name="settings_category_proxy">PROXY</string>
+    <string name="settings_category_downloads">TELECHARGEMENTS</string>
+    <string name="settings_category_romBase">BASE ROM</string>
+
+    <string name="settings_switch_backgroundCheck">Vérification en arrière plan</string>
+    <string name="settings_textView_backgroundCheckInterval">Intervalle de vérification</string>
+
+    <string name="settings_switch_useAndroidDM">Utiliser le gestionnaire de téléchargement Android</string>
+    <string name="settings_btn_useProxy">Utiliser un proxy</string>
+    <string name="settings_btn_downloadLocation">Emplacement téléchargements</string>
+    <string name="settings_btn_staticFilename">Nom de fichier statique</string>
+    <string name="settings_btn_receiveBeta">Recevoir les versions de test</string>
+    <string name="settings_btn_updateSource">Source des mises à jour</string>
+    <string name="settings_btn_romBase">Base de ROM préféré</string>
+
+    <string name="settings_info_useAndroidDM">Utiliser le gestionnaire de téléchargement d\'Android au lieu de celui de l\'application</string>
+    <string name="settings_info_useStaticFilename">Utiliser le même nom de fichier pour tout les téléchargement</string>
+    <string name="settings_info_onPostInstall">Les fichiers .zip placés dans /sdcard/PurityU2D/onPostUpdate/ seront installés automatiquement après chaque mise à jour.</string>
+
+    <string name="prompt_install1">La ROM a été téléchargé avec succès.\nAppuyez sur %1$s pour redémarrer et installer dès maintenant.\nAppuyez sur %2$s pour installer plus tard.</string>
+    <string name="prompt_install2">Le .zip de la ROM existe déjà.\nAppuyez sur %1$s pour l\'installer.\nCAppuyer sur %2$s pour l\'installer plus tard.</string>
+    <string name="prompt_md5mismatch">La ROM a été téléchargé avec succès. Néanmoins le MD5 est différent de celui du fichier".\n\nOriginal:%1$s\nCalculé:%2$s</string>
+    <string name="prompt_rootFail">Impossible d\'obtenir les droits root.\nVous pouvez télécharger la mise à jour via l\'application, mais l\'installation requiert les droits root.\nVeuillez vérifier vos paramètres et votre installation root.</string>
+    <string name="prompt_romBase">Quel base de ROM souhaitez-vous recevoir ?</string>
+    <string name="prompt_android_version">Quel version d\'Android souhaitez-vous recevoir ?</string>
+    <string name="prompt_blankDefault">Laissez tel quel pour laisser par défaut</string>
+    <string name="prompt_zipExtension">N\'oubliez pas d\'ajouter l\'extension .zip sur vos fichiers.</string>
+    <string name="receive_latest_version">Recevoir la dernière version disponible</string>
+    <string name="toast_restartApp">Redémarrer l\'application</string>
+    <string name="switch_bnrKernel">Sauvegarder et restaurer le kernel actuel</string>
+    <string name="switch_wipeCache">Effacer partition cache</string>
+    <string name="switch_wipeDalvik">Effacer le cache dalvik</string>
+    <string name="switch_factoryReset">Restauration usine (Installation propre)</string>
+    <string name="switch_factoryReset_summary">Efface la partition data, cache et dalvik.</string>
+    <string name="title_installQueue">File d\'installation</string>
+    <string name="empty">Vide</string>
+    <string name="hint_swipeToInstall">Glisser pour installer</string>
+    <string name="flash_a_zip">Flasher un ZIP</string>
+    <string name="dialog_content_github">Source sur Github</string>
+</resources>
