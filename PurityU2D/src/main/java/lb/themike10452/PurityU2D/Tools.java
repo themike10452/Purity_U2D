@@ -207,7 +207,7 @@ public class Tools {
         downloadedSize = 0;
 
         if (!useADM && activity != null) {
-            downloadWithNativeDownloader(activity, httpURL, altFilename, destination, MD5hash);
+            downloadWithNativeDownloader(activity, httpURL, destination, altFilename, MD5hash);
             return;
         }
 
