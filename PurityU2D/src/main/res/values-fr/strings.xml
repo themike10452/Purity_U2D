@@ -26,7 +26,7 @@
     <string name="dialog_title_md5mismatch">MD5 différent</string>
     <string name="dialog_title_rootFail">L\'accès root est requis pour faire cette action !</string>
 
-    <string name="dialog_content_about">Développé par %1$s</string>
+    <string name="dialog_content_about">Développée par %1$s</string>
 
     <string name="card_title_latestVersion">Dernière version</string>
     <string name="card_title_installedROM">Version installée</string>
@@ -41,8 +41,8 @@
     <string name="msg_device_not_supported">Appareil non supporté</string>
     <string name="msg_downloadCanceled">Téléchargement annulé</string>
     <string name="msg_downloadComplete">Téléchargement terminé</string>
-    <string name="msg_updateFound">Une nouvelle version a été trouvé !</string>
-    <string name="msg_changeable">Cette fonctionnalité peut être modifiée depuis le menu Paramètre de l\'application."</string>
+    <string name="msg_updateFound">Une nouvelle version est disponible !</string>
+    <string name="msg_changeable">Cette fonctionnalité peut être modifiée depuis le menu Paramètres de l\'application."</string>
     <string name="msg_noROMForYou">Il n\'y a pas %1$s ROM pour %2$s</string>
     <string name="msg_twrp">L\'installation automatisée ne fonctionne qu\'avec TWRP. CWM n\'est pas supporté.</string>
     <string name="msg_activeDownloads">Vous ne pouvez pas quitter : un téléchargement est en cours.</string>
@@ -71,22 +71,22 @@
 
     <string name="settings_switch_useAndroidDM">Utiliser le gestionnaire de téléchargement Android</string>
     <string name="settings_btn_useProxy">Utiliser un proxy</string>
-    <string name="settings_btn_downloadLocation">Emplacement téléchargements</string>
+    <string name="settings_btn_downloadLocation">Emplacement des téléchargements</string>
     <string name="settings_btn_staticFilename">Nom de fichier statique</string>
     <string name="settings_btn_receiveBeta">Recevoir les versions de test</string>
     <string name="settings_btn_updateSource">Source des mises à jour</string>
-    <string name="settings_btn_romBase">Base de ROM préféré</string>
+    <string name="settings_btn_romBase">Base de ROM préférée</string>
 
     <string name="settings_info_useAndroidDM">Utiliser le gestionnaire de téléchargement d\'Android au lieu de celui de l\'application</string>
-    <string name="settings_info_useStaticFilename">Utiliser le même nom de fichier pour tout les téléchargement</string>
+    <string name="settings_info_useStaticFilename">Utiliser le même nom de fichier pour tous les téléchargements</string>
     <string name="settings_info_onPostInstall">Les fichiers .zip placés dans /sdcard/PurityU2D/onPostUpdate/ seront installés automatiquement après chaque mise à jour.</string>
 
     <string name="prompt_install1">La ROM a été téléchargé avec succès.\nAppuyez sur %1$s pour redémarrer et installer dès maintenant.\nAppuyez sur %2$s pour installer plus tard.</string>
     <string name="prompt_install2">Le .zip de la ROM existe déjà.\nAppuyez sur %1$s pour l\'installer.\nCAppuyer sur %2$s pour l\'installer plus tard.</string>
     <string name="prompt_md5mismatch">La ROM a été téléchargé avec succès. Néanmoins le MD5 est différent de celui du fichier".\n\nOriginal:%1$s\nCalculé:%2$s</string>
     <string name="prompt_rootFail">Impossible d\'obtenir les droits root.\nVous pouvez télécharger la mise à jour via l\'application, mais l\'installation requiert les droits root.\nVeuillez vérifier vos paramètres et votre installation root.</string>
-    <string name="prompt_romBase">Quel base de ROM souhaitez-vous recevoir ?</string>
-    <string name="prompt_android_version">Quel version d\'Android souhaitez-vous recevoir ?</string>
+    <string name="prompt_romBase">Quelle base de ROM souhaitez-vous recevoir ?</string>
+    <string name="prompt_android_version">Quelle version d\'Android souhaitez-vous recevoir ?</string>
     <string name="prompt_blankDefault">Laissez tel quel pour laisser par défaut</string>
     <string name="prompt_zipExtension">N\'oubliez pas d\'ajouter l\'extension .zip sur vos fichiers.</string>
     <string name="receive_latest_version">Recevoir la dernière version disponible</string>
